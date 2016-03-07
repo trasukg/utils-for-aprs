@@ -9,6 +9,7 @@
   "author": "Greg Trasuk",
   "license": "ISC",
   "dependencies": {
-    "serialport": "^2.0.6"
+    "serialport": "^2.0.6",
+    "sprintf-js": "^1.0.3"
   }
 }

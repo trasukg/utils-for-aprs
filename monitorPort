@@ -50,7 +50,7 @@ var port=new SerialPort(process.argv[2],
         }
         output=output+ "0x" + data[i].toString(16);
       }
-      output=output+"]";
+      output=output+"],";
       console.log(output);
     });
   });
