@@ -22,6 +22,9 @@ var sampleFrames=require("./spec/sample-frames.js").sampleFrames;
 var ax25utils=require("./ax25-utils.js");
 
 var parser=new KISSFrameParser();
+var aprsParser=require("./aprs-info-parser.js");
+
+var parsedAprs=0;
 
 sampleFrames.forEach(function(item) {
   if (item.length==0) { return; }
@@ -32,4 +35,13 @@ sampleFrames.forEach(function(item) {
     ax25utils.addressToString(frame.destination),
     ax25utils.repeaterPathToString(frame.repeaterPath),
     frame.info.toString("utf8"));
+  try {
+    aprsParser.parse(frame);
+    console.log("Frame is " + JSON.stringify(frame, null, 2));
+    parsedAprs++;
+  } catch(err) {
+    //console.log(err);
+  }
 });
+
+console.log("APRS Parser worked on %d frames of %d", parsedAprs, sampleFrames.length);

@@ -44,6 +44,18 @@ describe("The APRS info parser", function() {
     var parser=new KISSFrameParser();
     parser.setInput(input);
     var frame=parser.parseFrame();
+    //console.log("Info field is [%s]", frame.info);
+    aprsParser.parse(frame);
+    expect(frame.dataType).toBe('telemetry');
+    expect(frame.telemetry.sequenceNumber).toBe(630);
+    expect(frame.telemetry.values).toEqual([131,30,999,670,517]);
+    expect(frame.telemetry.flags).toBe(parseInt("00001011",2));
+  });
+  it("takes the 3rd sample and parses it", function() {
+    var input=new Buffer(sampleFrames[3]);
+    var parser=new KISSFrameParser();
+    parser.setInput(input);
+    var frame=parser.parseFrame();
     console.log("Info field is [%s]", frame.info);
     aprsParser.parse(frame);
     expect(frame.dataType).toBe('telemetry');

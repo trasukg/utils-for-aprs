@@ -133,7 +133,7 @@ KISSFrameParser.prototype.parseProtocol=function() {
 }
 
 KISSFrameParser.prototype.parseInfo=function() {
-    var info=this.inputBuffer.slice(this.currentIndex);
+    var info=this.inputBuffer.slice(this.currentIndex).toString('utf8');
     this.currentIndex += info.length;
     return info;
 }

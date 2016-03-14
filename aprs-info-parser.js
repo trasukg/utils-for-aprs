@@ -29,14 +29,14 @@ function advance() {
 }
 
 function parse(frame) {
-  frame.dataTypeChar=frame.info[0];
+  frame.dataTypeChar=frame.info.charCodeAt(0);
   var parser=dataTypeParsers[frame.dataTypeChar];
   if (parser == undefined) {
     throw new exceptions.InfoError(sprintf("%d (%s)",
       frame.dataTypeChar, String.fromCharCode(frame.dataTypeChar)));
   }
   // Prime the lexical analyzer for the rest of the frame.
-  lexer.setInput(frame.info.slice(1).toString('utf8'));
+  lexer.setInput(frame.info.slice(1));
   parser(frame);
 }
 
