@@ -4,12 +4,17 @@
   "description": "A suite of utilities for Advanced Packet Reporting System over a KISS TNC.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jasmine"
   },
   "author": "Greg Trasuk",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "dependencies": {
+    "lex": "^1.7.9",
     "serialport": "^2.0.6",
     "sprintf-js": "^1.0.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:trasukg/utils-for-aprs.git"
   }
 }

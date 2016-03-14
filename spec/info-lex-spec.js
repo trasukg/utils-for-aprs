@@ -17,27 +17,27 @@ specific language governing permissions and limitations
 under the License.
 */
 
-var util=require("util");
-var sprintf=require("sprintf-js").sprintf;
+var InfoLexer=require("../info-lex.js");
 
-function FrameError(msg) {
-  this.detail=msg;
-  this.message="Framing Error: " + msg;
-}
-util.inherits(FrameError, Error);
+describe("The InfoLex lexer", function() {
+  it("matches a sequence number", function() {
+    var lexer=new InfoLexer();
+    lexer.setInput("#012");
+    var tok=lexer.lex();
+    expect(tok.token).toBe(InfoLexer.SEQ_NUMBER);
+    expect(tok.tval).toBe(12);
+  });
+  describe("matches MIC followed by a comma", function() {
+    var lexer=new InfoLexer();
+    lexer.setInput("MIC,");
+    it("matches a MIC", function() {
+      var tok=lexer.lex();
+      expect(tok.token).toBe(InfoLexer.MIC);
+    });
+    it("matches a COMMA", function() {
+      var tok=lexer.lex();
+      expect(tok.token).toBe(InfoLexer.COMMA);
+    });
 
-exports.FrameError=FrameError;
-
-function InfoError(msg) {
-  this.detail=msg;
-  this.message=sprintf("Unknown data type: %s", msg);
-}
-util.inherits(InfoError, Error);
-exports.InfoError=InfoError;
-
-function FormatError(msg) {
-  this.detail=msg;
-  this.message=sprintf("Format error: %s", msg);
-}
-util.inherits(FormatError, Error);
-exports.FormatError=FormatError;
+  });
+})

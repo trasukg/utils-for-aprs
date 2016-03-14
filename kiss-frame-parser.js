@@ -110,6 +110,9 @@ KISSFrameParser.prototype.parseRepeaterPath=function() {
 
 KISSFrameParser.prototype.parseFrame=function() {
   var frame={};
+  if (this.nextByte==undefined) {
+    return undefined;
+  }
   this.parseKISSDataFrameCommand();
   frame.destination=this.parseAddress();
   frame.source=this.parseAddress();
