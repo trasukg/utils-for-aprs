@@ -24,7 +24,7 @@ module.exports=InfoLexer;
 
 function InfoLexer() {
   Lexer.call(this);
-  
+
   this.theRest=function() {
     return this.input.slice(this.index);
   };
@@ -57,7 +57,25 @@ function InfoLexer() {
       tval: parseInt(lexeme,2)
     };
   });
+
+  this.advance=function() {
+    this.current=this.lex();
+  }
+
+  // Advance and read a fixed-length field of n characters.
+  this.advanceFixed=function(n) {
+    this.token=InfoLexer.FIXED_WIDTH;
+    this.tval=this.input.slice(this.index, this.index+n);
+    this.index += n;
+    return this.tval;
+  }
+
+  // Peek at a possible fixed-width field.
+  this.peek=function(n) {
+    return this.input.slice(this.index, this.index+n);
+  }
 }
+
 util.inherits(InfoLexer,Lexer);
 
 
@@ -66,3 +84,4 @@ InfoLexer.MIC=1;
 InfoLexer.COMMA=2;
 InfoLexer.INT=3;
 InfoLexer.BINARY_OCTET=4;
+InfoLexer.FIXED_WIDTH=5;

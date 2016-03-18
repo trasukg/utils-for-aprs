@@ -26,23 +26,29 @@ var APRSParser=require("./aprs-info-parser.js");
 var aprsParser=new APRSParser();
 
 var parsedAprs=0;
+var undecodedErrors={};
 
-sampleFrames.forEach(function(item) {
+sampleFrames.forEach(function(item, index) {
   if (item.length==0) { return; }
   parser.setInput(new Buffer(item));
   var frame=parser.parseFrame();
-  console.log("%s -> %s via %s : %s",
-    ax25utils.addressToString(frame.source),
-    ax25utils.addressToString(frame.destination),
-    ax25utils.repeaterPathToString(frame.repeaterPath),
-    frame.info.toString("utf8"));
   try {
     aprsParser.parse(frame);
-    console.log("Frame is " + JSON.stringify(frame, null, 2));
+    //console.log("Frame is " + JSON.stringify(frame, null, 2));
     parsedAprs++;
   } catch(err) {
-    //console.log(err);
+    if (undecodedErrors[err]==undefined) {
+      undecodedErrors[err]=0;
+    }
+    undecodedErrors[err]=undecodedErrors[err]+1;
+    console.log("Undecoded frame index %d: %s", index, err);
+    console.log("%s -> %s via %s : %s",
+      ax25utils.addressToString(frame.source),
+      ax25utils.addressToString(frame.destination),
+      ax25utils.repeaterPathToString(frame.repeaterPath),
+      frame.info.toString("utf8"));
   }
 });
 
 console.log("APRS Parser worked on %d frames of %d", parsedAprs, sampleFrames.length);
+console.log(undecodedErrors);
