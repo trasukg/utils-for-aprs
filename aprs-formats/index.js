@@ -151,5 +151,56 @@ exports.parseLongitude=parseLongitude;
 var parseDataExtension=function() {}
 exports.parseDataExtension=parseDataExtension;
 
-var parseCommentThatMayHaveAltitude=function() {}
-exports.parseCommentThatMayHaveAltitude=parseCommentThatMayHaveAltitude;
+var parseWeatherData=function(comment) {
+  var result;
+  var weather={};
+  // Get wind direction and speed
+  result= /^(\d{3})\/(\d{3})/.exec(comment);
+  if (result) {
+   weather.windDirection=parseFloat(result[1]);
+   weather.windSpeed=parseFloat(result[2]);
+  }
+  // Get wind direction If not at start of comment.
+  (result= /c(\d{3})/.exec(comment)) && (weather.windDirection=parseFloat(result[1]));
+  // Get wind speed If not at start of comment.
+  (result= /s(\d{3})/.exec(comment)) && (weather.windSpeed=parseFloat(result[1]));
+  // Get gust
+  (result= /g(\d{3})/.exec(comment)) && (weather.gust=parseFloat(result[1]));
+  // Get Temperature
+  (result= /t(\d{3})/.exec(comment)) && (weather.temperature=parseFloat(result[1]));
+  // Get rain in last hour
+  (result= /r(\d{3})/.exec(comment)) && (weather.rainLastHour=parseFloat(result[1]));
+  // Get rain in last 24 hours.
+  (result= /p(\d{3})/.exec(comment)) && (weather.rainLast24Hour=parseFloat(result[1]));
+  // Get rain since midnight
+  (result= /P(\d{3})/.exec(comment)) && (weather.rainSinceMidnight=parseFloat(result[1]));
+  // Get humidity
+  (result= /h(\d{2})/.exec(comment)) && (weather.humidity=parseFloat(result[1]));
+  // Get Pressure
+  (result= /b(\d{5})/.exec(comment)) && (weather.barometer=parseFloat(result[1])/100);
+  this.frame.weather=weather;
+}
+
+var parseCommentThatMayHaveAltitudeOrWeather=function() {
+  var comment=this.lexer.theRest();
+  //console.log("comment is '%s'", comment);
+  if (this.frame.position.symbolId=="_") {
+    parseWeatherData.call(this,comment);
+  } else {
+    // See if altitude is the first thing.
+    var result=/^\/A=(\d{6})/.exec(comment);
+    if (result) {
+      // If it is, snap the altitude and then strip it from the front.
+      this.frame.position.coords.altitude=parseFloat(result[1])*0.3048;
+      comment=comment.slice(9);
+    } else {
+      // See if there's an altitude anywhere.  If so, collect it, but leave it in.
+      result=/\/A=(\d{6})/.exec(comment);
+      if (result) {
+        this.frame.position.coords.altitude=parseFloat(result[1])*0.3048;
+      }
+    }
+  }
+  this.frame.comment=comment;
+}
+exports.parseCommentThatMayHaveAltitudeOrWeather=parseCommentThatMayHaveAltitudeOrWeather;

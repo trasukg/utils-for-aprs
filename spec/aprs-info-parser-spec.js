@@ -61,7 +61,7 @@ describe("The APRS info parser", function() {
     var frame=parser.parseFrame();
     console.log("Info field is [%s]", frame.info);
     aprsParser.parse(frame);
-    // Should get back a position in the same form that html5 would return it.
+    // Should get back a position in the same form that geolocation API would return it.
     expect(frame.dataType).toBe('positionWithTimestamp');
     expect(frame.hasMessaging).toBeFalsy();
     expect(frame.position).toBeDefined();
@@ -69,13 +69,15 @@ describe("The APRS info parser", function() {
     expect(frame.position.coords.latitude).toBeCloseTo(43.475833,5);
     expect(frame.position.coords.longitude).toBeDefined();
     expect(frame.position.coords.accuracy).toBeDefined();
+    expect(frame.position.coords.altitude).toBeCloseTo(137,0);
     expect(frame.position.timestamp).toBeDefined();
     // The two following fields are extensions to the html5 Position object,
     // for APRS.
     expect(frame.position.symbolTableId).toBeDefined();
     expect(frame.position.symbolId).toBeDefined();
   });
-  it("takes the 7th sample (Position without timestamp) and parses it", function() {
+  it("takes the 7th sample (Position/Weather Report without timestamp) and parses it",
+  function() {
     var input=new Buffer(sampleFrames[7]);
     var parser=new KISSFrameParser();
     parser.setInput(input);
@@ -94,7 +96,16 @@ describe("The APRS info parser", function() {
     // The two following fields are extensions to the html5 Position object,
     // for APRS.
     expect(frame.position.symbolTableId).toBeDefined();
-    expect(frame.position.symbolId).toBeDefined();
+    expect(frame.position.symbolId).toBe("_");
+    expect(frame.weather.windDirection).toBe(172);
+    expect(frame.weather.windSpeed).toBe(0);
+    expect(frame.weather.gust).toBeUndefined();
+    expect(frame.weather.temperature).toBe(28);
+    expect(frame.weather.rainLastHour).toBe(0);
+    expect(frame.weather.rainLast24Hour).toBe(0);
+    expect(frame.weather.rainSinceMidnight).toBeUndefined();
+    expect(frame.weather.humidity).toBe(77);
+    expect(frame.weather.barometer).toBeCloseTo(102.14,2);
   });
   it("takes the 11th sample (Position w/o timestamp, no messaging) and parses it",
   function() {

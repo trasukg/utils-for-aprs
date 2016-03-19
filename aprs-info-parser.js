@@ -142,7 +142,7 @@ var formats=require("./aprs-formats");
 
     formats.parsePositionCoordinates.call(this);
     formats.parseDataExtension.call(this);
-    formats.parseCommentThatMayHaveAltitude.call(this);
+    formats.parseCommentThatMayHaveAltitudeOrWeather.call(this);
   }
 
   var parsePositionWithTimestampWithMessaging=function() {
@@ -155,7 +155,7 @@ var formats=require("./aprs-formats");
 
     formats.parsePositionCoordinates.call(this);
     formats.parseDataExtension.call(this);
-    formats.parseCommentThatMayHaveAltitude.call(this);
+    formats.parseCommentThatMayHaveAltitudeOrWeather.call(this);
   }
 
   var parsePositionWithoutTimestampWithMessaging=function() {
@@ -166,7 +166,7 @@ var formats=require("./aprs-formats");
     };
     formats.parsePositionCoordinates.call(this);
     formats.parseDataExtension.call(this);
-    formats.parseCommentThatMayHaveAltitude.call(this);
+    formats.parseCommentThatMayHaveAltitudeOrWeather.call(this);
   }
 
   var parsePositionWithoutTimestampNoMessaging=function() {
@@ -177,7 +177,7 @@ var formats=require("./aprs-formats");
     };
     formats.parsePositionCoordinates.call(this);
     formats.parseDataExtension.call(this);
-    formats.parseCommentThatMayHaveAltitude.call(this);
+    formats.parseCommentThatMayHaveAltitudeOrWeather.call(this);
   }
 
   var dataTypeParsers={
