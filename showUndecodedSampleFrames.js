@@ -41,13 +41,15 @@ sampleFrames.forEach(function(item, index) {
       undecodedErrors[err]=0;
     }
     undecodedErrors[err]=undecodedErrors[err]+1;
-    console.log("Undecoded frame index %d: %s", index, err);
-    console.log("%s -> %s via %s : %s",
+    console.log("[%d] %s -> %s via %s : %s",
+      index,
       ax25utils.addressToString(frame.source),
       ax25utils.addressToString(frame.destination),
       ax25utils.repeaterPathToString(frame.repeaterPath),
       frame.info.toString("utf8"));
+    console.log("...couldn't decode APRS: %s", err);
   }
+
 });
 
 console.log("APRS Parser worked on %d frames of %d", parsedAprs, sampleFrames.length);
