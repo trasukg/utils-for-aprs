@@ -167,7 +167,37 @@ var parseLongitude=function() {
 }
 exports.parseLongitude=parseLongitude;
 
-var parseDataExtension=function() {}
+var phgre=/PHG(\d)(\d)(\d)(\d)/;
+
+/*
+  There are very few possible values, so we'll use a lookup table to speed
+  things up a little.
+*/
+var phgValues=[
+  {power: 0, height: 10, gain: 0, directivity: undefined },
+  {power: 1, height: 20, gain: 1, directivity: 45 },
+  {power: 4, height: 40, gain: 2, directivity: 90 },
+  {power: 9, height: 80, gain: 3, directivity: 135 },
+  {power: 16, height: 160, gain: 4, directivity: 180 },
+  {power: 25, height: 320, gain: 5, directivity: 225 },
+  {power: 36, height: 640, gain: 6, directivity: 270 },
+  {power: 49, height: 1280, gain: 7, directivity: 315 },
+  {power: 64, height: 2560, gain: 8, directivity: 360 },
+  {power: 81, height: 5120, gain: 9, directivity: undefined },
+];
+
+var parseDataExtension=function() {
+  var extension=this.lexer.peek(7);
+  var result;
+  if (result=phgre.exec(extension)) {
+    this.lexer.advanceFixed(7);
+    this.frame.position.power=phgValues[parseInt(result[1])].power;
+    this.frame.position.height=phgValues[parseInt(result[2])].height;
+    this.frame.position.gain=phgValues[parseInt(result[3])].gain;
+    this.frame.position.directivity=phgValues[parseInt(result[4])].directivity;
+  }
+}
+
 exports.parseDataExtension=parseDataExtension;
 
 var parseWeatherData=function(comment) {
@@ -220,6 +250,11 @@ var parseCommentThatMayHaveAltitudeOrWeather=function() {
       }
     }
   }
+  // If comment starts with '/' strip the '/'
+  if (comment.startsWith('/')) {
+    comment=comment.slice(1);
+  }
+  comment=comment.trim();
   this.frame.comment=comment;
 }
 exports.parseCommentThatMayHaveAltitudeOrWeather=parseCommentThatMayHaveAltitudeOrWeather;
