@@ -27,10 +27,15 @@ var APRSProcessor=function() {
   this.frameParser=new KISSFrameParser();
   this.aprsParser=new APRSInfoParser();
   this.data=function(data) {
-    this.frameParser.setInput(data);
-    var frame=this.frameParser.parseFrame();
-    this.aprsParser.parse(frame);
-    this.emit('aprsData', frame);
+    var frame;
+    try {
+      this.frameParser.setInput(data);
+      frame=this.frameParser.parseFrame();
+      this.aprsParser.parse(frame);
+      this.emit('aprsData', frame);
+    } catch(err) {
+      this.emit('error', err, frame);
+    }
   };
 }
 
