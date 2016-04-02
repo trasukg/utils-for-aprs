@@ -17,6 +17,23 @@ specific language governing permissions and limitations
 under the License.
 */
 
-exports.APRSProcessor=require("./aprs-processor.js");
-exports.ax25utils=require("./ax25-utils.js");
-exports.framing=require('./kiss-framing.js');
+var util=require('util');
+var EventEmitter=require('events');
+
+var KISSFrameParser=require("./kiss-frame-parser.js");
+var APRSInfoParser=require("./aprs-info-parser.js");
+
+var APRSProcessor=function() {
+  this.frameParser=new KISSFrameParser();
+  this.aprsParser=new APRSInfoParser();
+  this.data=function(data) {
+    this.frameParser.setInput(data);
+    var frame=this.frameParser.parseFrame();
+    this.aprsParser.parse(frame);
+    this.emit('aprsData', frame);
+  };
+}
+
+util.inherits(APRSProcessor, EventEmitter);
+
+module.exports=APRSProcessor;

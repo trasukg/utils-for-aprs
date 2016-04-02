@@ -17,6 +17,26 @@ specific language governing permissions and limitations
 under the License.
 */
 
-exports.APRSProcessor=require("./aprs-processor.js");
-exports.ax25utils=require("./ax25-utils.js");
-exports.framing=require('./kiss-framing.js');
+var KISSFrameParser=require("../kiss-frame-parser.js");
+var APRSProcessor=require("../aprs-processor.js");
+var sampleFrames=require("./sample-frames.js").sampleFrames;
+
+var Uut=new APRSProcessor();
+
+describe("The APRS processor", function() {
+  it("takes gets called with frame data and emits events.", function() {
+    var input=new Buffer(sampleFrames[0]);
+    var wasCalled=false;
+    var receivedPacket=null;
+
+    Uut.on('aprsData', function(packet) {
+      wasCalled=true;
+      receivedPacket=packet;
+    });
+    Uut.data(input);
+    expect(wasCalled).toBeTruthy();
+    expect(receivedPacket).toBeDefined();
+    expect(receivedPacket.dataType).toBe('status');
+    expect(receivedPacket.statusText).toBe('Burlington Amateur Radio Club');
+  });
+});
