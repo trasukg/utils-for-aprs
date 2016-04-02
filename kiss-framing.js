@@ -87,7 +87,7 @@ function frameStateMachine(bufferLength) {
         process=escaped;
         break;
       case FEND:
-        emitter.emit('data', outputBuffer.slice(0,contentLength));
+        if (contentLength>0) emitter.emit('data', outputBuffer.slice(0,contentLength));
         contentLength=0;
         break;
       default:

@@ -25,7 +25,7 @@ var path=require('path');
 var util=require('util');
 var framing=require('./kiss-framing.js');
 var KISSFrameParser=require("./kiss-frame-parser.js");
-var APRSInfoParser=require)"./aprs-info-parser.js";
+var APRSInfoParser=require("./aprs-info-parser.js");
 
 console.log("process.argv=" + process.argv);
 
@@ -54,6 +54,7 @@ var port=new SerialPort(process.argv[2],
         console.log(frame);
       } catch(err) {
         console.log("Bad frame:", err);
+        console.log(frame);
       }
     });
   });
