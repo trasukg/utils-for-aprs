@@ -20,3 +20,4 @@ under the License.
 exports.APRSProcessor=require("./aprs-processor.js");
 exports.ax25utils=require("./ax25-utils.js");
 exports.framing=require('./kiss-framing.js');
+exports.tncSimulator=require('./tnc-simulator.js');
