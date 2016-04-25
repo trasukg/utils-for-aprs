@@ -54,6 +54,7 @@ var port=new SerialPort(process.argv[2],
         console.log(frame);
       } catch(err) {
         console.log("Bad frame:", err);
+        console.log(frame);
       }
     });
   });
