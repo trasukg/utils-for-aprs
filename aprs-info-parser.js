@@ -170,6 +170,16 @@ var parseCurrentMicEData=function() {
   micE.parse.call(this);
 }
 
+/**
+  Messages:
+    ':' <addressee> ':' <message-text> ['{' <message-number> ]
+*/
+var parseMessage=function() {
+  this.frame.dataType='message';
+  formats.parseAddressee.call(this);
+  if (this.lexer.current.token != InfoLexer.COLON) {}
+}
+
 var dataTypeParsers={
   62 : parseStatus,
   84 : parseTelemetry,
@@ -178,5 +188,6 @@ var dataTypeParsers={
   61 : parsePositionWithoutTimestampWithMessaging,
   33 : parsePositionWithoutTimestampNoMessaging,
   96 : parseCurrentMicEData,
-  39 : parseCurrentMicEData
+  39 : parseCurrentMicEData,
+  ':': parseMessage
 };

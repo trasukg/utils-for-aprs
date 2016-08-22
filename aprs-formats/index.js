@@ -258,3 +258,7 @@ var parseCommentThatMayHaveAltitudeOrWeather=function() {
   this.frame.comment=comment;
 }
 exports.parseCommentThatMayHaveAltitudeOrWeather=parseCommentThatMayHaveAltitudeOrWeather;
+
+var parseAddresseee=function() {
+  this.frame.addressee=this.lexer.advanceFixed(9).trim();
+}

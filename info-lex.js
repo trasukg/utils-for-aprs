@@ -85,3 +85,4 @@ InfoLexer.COMMA=2;
 InfoLexer.INT=3;
 InfoLexer.BINARY_OCTET=4;
 InfoLexer.FIXED_WIDTH=5;
+InfoLexer.COLON=6;
