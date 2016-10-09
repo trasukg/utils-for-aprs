@@ -17,6 +17,15 @@ specific language governing permissions and limitations
 under the License.
 */
 
+/*
+  This is a processor for KISS-formatted APRS data.
+  It can either deal with raw bytes that contain KISS-formatted data, or you
+  can feed it KISS frames that have already been decoded for framing and de-escaped.
+
+  Either way, it emits an 'aprsData' event on a good frame decode, and an 'error'
+  event on a failed decode.
+*/
+
 var util=require('util');
 var EventEmitter=require('events');
 
@@ -37,6 +46,15 @@ var APRSProcessor=function() {
       this.emit('error', err, frame);
     }
   };
+  // If presented with KISS data, we don't need to run it through the KISS framing.
+  this.kissFrame(frame) {
+    try {
+      this.aprsParser.parse(frame);
+      this.emit('aprsData', frame);
+    } catch(err) {
+      this.emit('error', err, frame);
+    }
+  }
 }
 
 util.inherits(APRSProcessor, EventEmitter);

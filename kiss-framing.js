@@ -18,13 +18,13 @@ under the License.
 */
 
 /* This function returns a parser function that emits a
-data event when the framing character is received.  While processing
+data event when a properly framed KISS frame is received.  While processing
 the input events, it de-escapes the TNC data stream.
 
 The KISS protocol document recommends no arbitrary limit on packet size.
 It also recommends that packets at least 1024 bytes long should be accomodated.
 
-Initially, we're focussing on APRS, so we're probably talking less than
+Initially, we're focussing on APRS, so we're probably talking less than.
 also we're running on a machine that isn't
 fundamentally memory-limited (at least in the context of this program,
 even an old RPi with 512MB is pretty big), so we'll use 1024 bytes, which

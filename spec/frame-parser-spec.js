@@ -96,7 +96,9 @@ describe("The AX.25 KISS Frame Parser", function() {
     });
   });
 
-  describe("parses a complete frame", function() {
+  describe("parses a complete frame, giving us an object that contains the frame." +
+            "  When complete, we can abandon or re-use the input buffer",
+    function() {
     var parser=new KISSFrameParser();
     parser.setInput(new Buffer(sampleFrames[0]));
     var frame=parser.parseFrame();
