@@ -46,15 +46,6 @@ var APRSProcessor=function() {
       this.emit('error', err, frame);
     }
   };
-  // If presented with KISS data, we don't need to run it through the KISS framing.
-  this.kissFrame(frame) {
-    try {
-      this.aprsParser.parse(frame);
-      this.emit('aprsData', frame);
-    } catch(err) {
-      this.emit('error', err, frame);
-    }
-  }
 }
 
 util.inherits(APRSProcessor, EventEmitter);

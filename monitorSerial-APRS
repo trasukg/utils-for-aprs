@@ -25,13 +25,13 @@ under the License.
 */
 var path=require('path');
 var util=require('util');
-var SocketKISSFrameEndpoint=require('./SocketKISSFrameEndpoint.js');
+var SerialKISSFrameEndpoint=require('./SerialKISSFrameEndpoint.js');
 var APRSProcessor=require("./aprs-processor.js");
 
 console.log("process.argv=" + process.argv);
 
 if (process.argv.length != 3) {
-  console.log("Usage: node %s <port>", path.basename(process.argv[1]));
+  console.log("Usage: node %s <device>", path.basename(process.argv[1]));
   return;
 }
 
@@ -41,9 +41,10 @@ if (process.argv.length != 3) {
 */
 
 //Create the endpoint
-var endpoint=new SocketKISSFrameEndpoint();
-endpoint.host="localhost";
-endpoint.port=process.argv[2];
+var endpoint=new SerialKISSFrameEndpoint(process.argv[2], {
+  baudrate: 1200
+});
+
 var aprsProcessor=new APRSProcessor();
 
 // When we get data on the aprsProcessor, show it on the console.
@@ -55,7 +56,8 @@ aprsProcessor.on('error', function(err) {
 });
 
 // The endpoint provides de-escaped KISS frames.  Pass them on to the aprsProcessor
-endpoint.on('data', function(data) {
+endpoint.on('data', function(frame) {
+  console.log("Got frame " + frame);
   aprsProcessor.data(frame);
 });
 
