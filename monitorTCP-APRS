@@ -25,8 +25,8 @@ under the License.
 */
 var path=require('path');
 var util=require('util');
-var SocketKISSFrameEndpoint=require('./SocketKISSFrameEndpoint.js');
-var APRSProcessor=require("./aprs-processor.js");
+var SocketKISSFrameEndpoint=require('./src/SocketKISSFrameEndpoint.js');
+var APRSProcessor=require("./src/aprs-processor.js");
 
 console.log("process.argv=" + process.argv);
 
@@ -55,14 +55,16 @@ aprsProcessor.on('error', function(err) {
 });
 
 // The endpoint provides de-escaped KISS frames.  Pass them on to the aprsProcessor
-endpoint.on('data', function(data) {
-  aprsProcessor.data(frame);
-});
+
 
 // Log interesting events...
-endpoint.on('connect', function() {
+endpoint.on('connect', function(connection) {
   console.log("Connected to port " + endpoint.port);
+  connection.on('data', function(data) {
+    aprsProcessor.data(frame);
+  });
 });
+
 endpoint.on('disconnect', function() {
   console.log('Lost connection');
 });

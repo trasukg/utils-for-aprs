@@ -2,7 +2,7 @@
   "name": "utils-for-aprs",
   "version": "1.0.1",
   "description": "A suite of utilities for Advanced Packet Reporting System over a KISS TNC.",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "jasmine"
   },
@@ -16,5 +16,11 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:trasukg/utils-for-aprs.git"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.17.2",
+    "gulp": "^3.9.1",
+    "gulp-jasmine": "^2.4.2",
+    "gulp-jsdoc3": "^1.0.0"
   }
 }

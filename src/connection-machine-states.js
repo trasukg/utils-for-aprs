@@ -17,8 +17,29 @@ specific language governing permissions and limitations
 under the License.
 */
 
-exports.APRSProcessor=require("./aprs-processor.js");
-exports.ax25utils=require("./ax25-utils.js");
-exports.framing=require('./kiss-framing.js');
-exports.tncSimulator=require('./tnc-simulator.js');
-exports.SocketKISSFrameEndpoint=require('./SocketKissFrameEndpoint.js');
+module.exports = {
+  Idle: {
+    enable: 'Connecting',
+    error: 'Idle',
+    timeout: 'Idle'
+  },
+  Connecting: {
+    connectionSucceeded: 'Connected',
+    connectionFailed: 'WaitingRetry',
+    error: 'WaitingRetry',
+    disable: ['Idle', function() {this.closeConnection(); }],
+    onEntry: function() { this.openConnection(); },
+  },
+  Connected: {
+    disable: 'Idle',
+    error: 'WaitingRetry',
+    onExit: function() { this.closeConnectionAndEmitDisconnect(); },
+    onEntry: function() { this.emitConnect(); }
+  },
+  WaitingRetry: {
+    disable: 'Idle',
+    error: 'WaitingRetry',
+    timeout: 'Connecting',
+    onEntry: function() { this.triggerWait(); },
+  }
+}

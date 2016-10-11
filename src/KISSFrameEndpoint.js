@@ -36,57 +36,57 @@ byte-stuffing as required.  When a KISS frame is received, the endpoint emits a
 
 var util=require('util');
 var StateMachine=require('./StateMachine.js');
-var SerialPort=require('serialport').SerialPort;
 var EventEmitter=require('events');
-var net=require('net');
 var framing=require('./kiss-framing.js');
+var KISSConnection=require('./KISSConnection.js');
 
 // 'connection-machine-states' contains a state machine description that has the
 // persistent connection behaviour that we want.
 var states= require('./connection-machine-states.js');
 
-var SerialKISSFrameEndpoint=function(device, options) {
-  this.device=device;
-  this.options=options;
+var KISSFrameEndpoint=function() {
+  EventEmitter.apply(this);
   StateMachine.call(this, states, 'Idle');
   this.kissFrameParser=framing.tncFrameParser();
 };
 
-util.inherits(SerialKISSFrameEndpoint, EventEmitter);
+util.inherits(KISSFrameEndpoint, EventEmitter);
 
-SerialKISSFrameEndpoint.prototype.openConnection=function() {
-  // The closures will be called in the context of the socket, so store the current
-  // value of 'this' for use in the closures.
-  var self=this;
-  self.port=new SerialPort(self.device, self.options, function(err) {
-    if(!err) {
-      self.connectionSucceeded();
-    } else {
-      self.connectionFailed(err);
-    }
-  });
-  self.port.on('error', function(err) {
-    //console.log("this=" + JSON.stringify(self));
-    console.log("Got error:" + err);
-    self.error(err);
-  });
-  self.port.on('close', function() {
-    console.log('Got socket closed event.');
-    self.error();
-  })
-  self.port.on('data', function(data) {
-    // Run the data through the KISSFrameParser.
-    // It will emit a 'data' event when it has a frame.
-    self.kissFrameParser(self, data);
-  });
+/**
+  @abstract openConnection
+  This function should open the physical connection.  It is called on
+  entry to the Connecting state.  On successful opening, it should call
+  'self.connectionSucceeded()' and on failure, it should call 'self.connectionFailed()',
+  as expected by the state machine.
+
+*/
+KISSFrameEndpoint.prototype.openConnection=function() {
+
 }
 
-SerialKISSFrameEndpoint.prototype.closeConnection=function() {
-  console.log("Closing connection");
-  this.port.close();
+/**
+  The connection machine state table calls this function when the
+  Connected state is entered.  It should create a KISSConnection object that
+  is wrapped around the actual connection, and then emit a 'connect' event that
+  passes the KISSConnection object as its argument.  Clients can then subscribe
+  to either 'data' events on the KISSConnection to receive frames.  They can
+  also call 'data(frame)' on the KISSConnection to send a frame.  When the
+  connection gets closed, it will emit a 'closed' event, so the client knows to
+  stop using it.
+
+  When data arrives on the underlying port, it should be passed through the
+  kissFrameParser, such that the connection object emits a 'data' event that
+  contains the unescaped KISS frame, with the command header stripped.
+*/
+KISSFrameEndpoint.prototype.emitConnection=function() {
+  this.emit('connection', undefined);
 }
 
-SerialKISSFrameEndpoint.prototype.triggerWait=function() {
+KISSFrameEndpoint.prototype.closeConnectionAndEmitDisconnect=function() {
+  this.emit('disconnect');
+}
+
+KISSFrameEndpoint.prototype.triggerWait=function() {
   // The closures will be called in the context of the socket, so store the current
   // value of 'this' for use in the closures.
   var self=this;
@@ -96,4 +96,4 @@ SerialKISSFrameEndpoint.prototype.triggerWait=function() {
 }
 
 // Export the endpoint constructor.
-module.exports=SerialKISSFrameEndpoint;
+module.exports=KISSFrameEndpoint;

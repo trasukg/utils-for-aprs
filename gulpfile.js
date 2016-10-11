@@ -17,29 +17,29 @@ specific language governing permissions and limitations
 under the License.
 */
 
-module.exports = {
-  Idle: {
-    enable: 'Connecting',
-    error: 'Idle',
-    timeout: 'Idle'
-  },
-  Connecting: {
-    connectionSucceeded: 'Connected',
-    connectionFailed: 'WaitingRetry',
-    error: 'WaitingRetry',
-    disable: ['Idle', function() {this.closeConnection(); }],
-    onEntry: function() { this.openConnection(); },
-  },
-  Connected: {
-    disable: 'Idle',
-    error: 'WaitingRetry',
-    onExit: function() { this.closeConnection(); this.emit('disconnect'); },
-    onEntry: function() { this.emit('connect'); }
-  },
-  WaitingRetry: {
-    disable: 'Idle',
-    error: 'WaitingRetry',
-    timeout: 'Connecting',
-    onEntry: function() { this.triggerWait(); },
-  }
-}
+var gulp        = require('gulp');
+var browserSync = require('browser-sync').create();
+
+// Static server
+gulp.task('show-docs', function() {
+    browserSync.init({
+        server: {
+            baseDir: "./docs/gen"
+        }
+    });
+});
+
+var jsdoc = require('gulp-jsdoc3');
+
+gulp.task('doc', function (cb) {
+    gulp.src(['README.md', 'src/**/*.js'], {read: false})
+        .pipe(jsdoc(cb));
+});
+
+const jasmine = require('gulp-jasmine');
+
+gulp.task('test', () =>
+    gulp.src('src/spec/**/*.js')
+        // gulp-jasmine works on filepaths so you can't have any plugins before it
+        .pipe(jasmine())
+);

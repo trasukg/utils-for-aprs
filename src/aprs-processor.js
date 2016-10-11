@@ -32,15 +32,37 @@ var EventEmitter=require('events');
 var KISSFrameParser=require("./kiss-frame-parser.js");
 var APRSInfoParser=require("./aprs-info-parser.js");
 
+/**
+  @module utils-for-aprs
+*/
+
+/**
+  @constructor APRSProcessor
+  @alias module:utils-for-aprs/APRSProcessor
+  Creates a new APRSProcessor object
+
+  @fires APRSProcessor#aprsData
+*/
 var APRSProcessor=function() {
   this.frameParser=new KISSFrameParser();
   this.aprsParser=new APRSInfoParser();
+  /**
+    Process a KISS frame.
+    The frame should be de-escaped and have the KISS command stripped.
+    If the frame decodes successfully, the APRSProcessor will emit an 'aprsData'
+    event.  Otherwise it will emit an 'error' event.
+  */
   this.data=function(data) {
     var frame;
     try {
       this.frameParser.setInput(data);
       frame=this.frameParser.parseFrame();
       this.aprsParser.parse(frame);
+      /**
+        aprsData event
+        @event APRSProcessor#aprsData
+        @type {object}
+      */
       this.emit('aprsData', frame);
     } catch(err) {
       this.emit('error', err, frame);
