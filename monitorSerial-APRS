@@ -25,8 +25,8 @@ under the License.
 */
 var path=require('path');
 var util=require('util');
-var SerialKISSFrameEndpoint=require('./SerialKISSFrameEndpoint.js');
-var APRSProcessor=require("./aprs-processor.js");
+var SerialKISSFrameEndpoint=require('./src/SerialKISSFrameEndpoint.js');
+var APRSProcessor=require("./src/aprs-processor.js");
 
 console.log("process.argv=" + process.argv);
 
