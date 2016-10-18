@@ -19,24 +19,23 @@ under the License.
 
 var util=require('util');
 var EventEmitter=require('events');
+var Escaper=require('./kiss-framing.js').Escaper;
 
 /**
   @class
   This class is a base class for some class that knows how to write data
   to a KISS Connection.
+  @param bufferLength The length of the output buffer.  Defaults to 1024 if
+  undefined.
 */
-module.exports=function() {
-
+module.exports=function(bufferLength) {
+  this.escaper=new Escaper(bufferLength?bufferLength:1024);
 }
 
 util.inherits(module.exports, EventEmitter);
 
 module.exports.prototype.data=function(data) {
-  buffer=buildFullKISSFrame(data);
-  this.write(buffer);
+  buffer=this.escaper.escapeAndWriteKISSCommand(data);
+  this.writeOutput(buffer);
   this.flush();
-}
-
-module.exports.prototype.buildFullKISSFrame=function(unescapedFrame) {
-
 }

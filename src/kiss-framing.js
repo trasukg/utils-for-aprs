@@ -37,7 +37,7 @@ are going to be small.
 
 function tncFrameParser() {
 
-  var stateMachine=frameStateMachine(1024);
+  var stateMachine=unescapeStateMachine(1024);
 
   return function(emitter, buffer){
     for (var i=0; i<buffer.length; i++) {
@@ -46,11 +46,12 @@ function tncFrameParser() {
   };
 }
 
-function frameStateMachine(bufferLength) {
-  var FEND=0xc0;
-  var FESC=0xdb;
-  var TFEND=0xdc;
-  var TFESC=0xdd;
+var FEND=0xc0;
+var FESC=0xdb;
+var TFEND=0xdc;
+var TFESC=0xdd;
+
+function unescapeStateMachine(bufferLength) {
 
   var outputBuffer=new Buffer(bufferLength);
   var contentLength=0;
@@ -114,4 +115,64 @@ function frameStateMachine(bufferLength) {
   }
 }
 
+/**
+  @constructor
+  This machine takes an unescaped frame and escapes it.
+  Calling it a state machine is probably a little generous, as it only has one
+  state, but the pattern is the same as the 'unescapeStateMachine'.
+*/
+function Escaper(bufferLength) {
+
+  var outputBuffer=new Buffer(bufferLength);
+  var contentLength=0;
+
+  var output=function(c) {
+      outputBuffer[contentLength++]=c;
+      if (contentLength>bufferLength) {
+        // Overflow is an error and will be silently ignored.
+        // Note that this _will_ have the effect of sending garbage down the
+        // wire, but the framing protocol will recover.
+        contentLength=0;
+      }
+  };
+
+  var process=function(c) {
+    switch(c) {
+      case FESC:
+        output(FESC);
+        output(TFESC);
+        break;
+      case FEND:
+        output(FESC);
+        output(TFEND);
+        break;
+      default:
+        output(c);
+    }
+  }
+
+
+  this.escape=function(buffer) {
+    contentLength=0;
+    for (var i=0; i<buffer.length; i++) {
+      process(buffer[i]);
+    }
+    // Return a copy of the buffer, in case it gets used anywhere else.
+    return Buffer.from(outputBuffer.slice(0, contentLength));
+  }
+
+  this.escapeAndWriteKISSCommand=function(buffer) {
+    contentLength=0;
+    output(0);
+    for (var i=0; i<buffer.length; i++) {
+      process(buffer[i]);
+    }
+    output(FEND);
+    // Return a copy of the buffer, in case it gets used anywhere else.
+    return Buffer.from(outputBuffer.slice(0, contentLength));
+  }
+
+}
+
 exports.tncFrameParser=tncFrameParser;
+exports.Escaper=Escaper;
