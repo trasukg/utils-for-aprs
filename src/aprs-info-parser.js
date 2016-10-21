@@ -177,7 +177,11 @@ var parseCurrentMicEData=function() {
 var parseMessage=function() {
   this.frame.dataType='message';
   formats.parseAddressee.call(this);
-  if (this.lexer.current.token != InfoLexer.COLON) {}
+  if (this.lexer.current.token != InfoLexer.COLON) {
+    console.log('lexer.theRest=' + this.lexer.theRest());
+    throw new exceptions.FormatError("Message format is incorrect - should be ':' after addressee");
+  }
+  formats.parseMessageText.call(this);
 }
 
 var dataTypeParsers={
@@ -189,5 +193,5 @@ var dataTypeParsers={
   33 : parsePositionWithoutTimestampNoMessaging,
   96 : parseCurrentMicEData,
   39 : parseCurrentMicEData,
-  ':': parseMessage
+  58 : parseMessage
 };

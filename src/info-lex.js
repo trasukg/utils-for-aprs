@@ -45,6 +45,11 @@ function InfoLexer() {
       token: InfoLexer.COMMA
     };
   });
+  this.addRule(/:/, function() {
+    return {
+      token: InfoLexer.COLON
+    };
+  });
   this.addRule(/\d{1,3}/, function(lexeme) {
     return {
       token: InfoLexer.INT,
