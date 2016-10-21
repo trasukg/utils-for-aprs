@@ -52,8 +52,15 @@ SerialConnection.prototype.closeConnection=function() {
   this.port.close();
 }
 
+SerialConnection.prototype.closeSocketAndEmitDisconnect=function() {
+  this.closeConnection();
+  this.emit('disconnect');
+}
 SerialConnection.prototype.triggerWait=function() {
   // TODO: Put in a wait function.
 }
 
+SerialConnection.prototype.emitConnect=function() {
+  this.emit('connect');
+}
 module.exports=SerialConnection;

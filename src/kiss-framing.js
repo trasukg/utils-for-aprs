@@ -35,7 +35,7 @@ into 'data' event and 'packet-ended' event.  But realistically, APRS packets
 are going to be small.
 */
 
-function tncFrameParser() {
+var tncFrameParser=function() {
 
   var stateMachine=unescapeStateMachine(1024);
 
@@ -51,7 +51,7 @@ var FESC=0xdb;
 var TFEND=0xdc;
 var TFESC=0xdd;
 
-function unescapeStateMachine(bufferLength) {
+var unescapeStateMachine=function(bufferLength) {
 
   var outputBuffer=new Buffer(bufferLength);
   var contentLength=0;
@@ -121,7 +121,7 @@ function unescapeStateMachine(bufferLength) {
   Calling it a state machine is probably a little generous, as it only has one
   state, but the pattern is the same as the 'unescapeStateMachine'.
 */
-function Escaper(bufferLength) {
+var Escaper=function(bufferLength) {
 
   var outputBuffer=new Buffer(bufferLength);
   var contentLength=0;
