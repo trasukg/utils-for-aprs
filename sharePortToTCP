@@ -29,7 +29,7 @@ under the License.
 var path=require('path');
 var util=require('util');
 var ServerSocketKISSFrameEndpoint=require('./src/ServerSocketKISSFrameEndpoint.js');
-var APRSProcessor=require("./src/aprs-processor.js");
+var SerialKISSFrameEndpoint=require('./src/SerialKISSFrameEndpoint.js');
 
 console.log("process.argv=" + process.argv);
 
@@ -64,7 +64,7 @@ serverEndpoint.on('connect', function(connection) {
   connection.on('data', function(frame) {
     relayToSerial(frame);
   });
-  connection.on('disconnect', function() {
+  connection.on('close', function() {
     tcpConnections.delete(connection);
     console.log('A TCP connection was closed');
   });
@@ -96,12 +96,14 @@ serialEndpoint.on('connect', function(connection) {
 
 var relayToSerial=function(frame) {
   serialConnections.forEach(function(connection){
+    console.log("TCP -> Serial");
     connection.data(frame);
   });
 }
 
 var relayToTCP=function(frame) {
   tcpConnections.forEach(function(connection){
+    console.log("Serial -> TCP");
     connection.data(frame);
   });
 }

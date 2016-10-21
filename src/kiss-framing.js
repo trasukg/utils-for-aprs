@@ -157,8 +157,9 @@ var Escaper=function(bufferLength) {
     for (var i=0; i<buffer.length; i++) {
       process(buffer[i]);
     }
+    output(FEND);
     // Return a copy of the buffer, in case it gets used anywhere else.
-    return Buffer.from(outputBuffer.slice(0, contentLength));
+    return new Buffer(outputBuffer.slice(0, contentLength));
   }
 
   this.escapeAndWriteKISSCommand=function(buffer) {
@@ -169,7 +170,9 @@ var Escaper=function(bufferLength) {
     }
     output(FEND);
     // Return a copy of the buffer, in case it gets used anywhere else.
-    return Buffer.from(outputBuffer.slice(0, contentLength));
+    var slicedBuffer=outputBuffer.slice(0, contentLength);
+    //console.log("slicedBuffer=" + slicedBuffer);
+    return new Buffer(slicedBuffer);
   }
 
 }
