@@ -133,6 +133,7 @@ var ServerSocketKISSConnection=function(socket, endpoint) {
   self.socket=socket;
   self.socket.on('close', function() {
     console.log('Got socket closed event.');
+    self.emit('close');
   });
   self.socket.on('data', function(data) {
     // Run the data through the KISSFrameParser.
@@ -143,6 +144,10 @@ var ServerSocketKISSConnection=function(socket, endpoint) {
 
 util.inherits(ServerSocketKISSConnection, KISSConnection);
 
-ServerSocketKISSConnection.writeOutput=function(buffer) {
+ServerSocketKISSConnection.prototype.write=function(buffer) {
   this.socket.write(buffer);
+}
+
+ServerSocketKISSConnection.prototype.flush=function() {
+  // No-op
 }

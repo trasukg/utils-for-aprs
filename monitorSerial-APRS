@@ -55,16 +55,16 @@ aprsProcessor.on('error', function(err) {
   console.log("Got eror event:" + err);
 });
 
-// The endpoint provides de-escaped KISS frames.  Pass them on to the aprsProcessor
-endpoint.on('data', function(frame) {
-  console.log("Got frame " + frame);
-  aprsProcessor.data(frame);
+// Log interesting events...
+endpoint.on('connect', function(connection) {
+  console.log("Connected to port " + endpoint.port);
+  // The endpoint provides de-escaped KISS frames.  Pass them on to the aprsProcessor
+  connection.on('data', function(frame) {
+    console.log("Got frame " + frame);
+    aprsProcessor.data(frame);
+  });
 });
 
-// Log interesting events...
-endpoint.on('connect', function() {
-  console.log("Connected to port " + endpoint.port);
-});
 endpoint.on('disconnect', function() {
   console.log('Lost connection');
 });

@@ -17,25 +17,9 @@ specific language governing permissions and limitations
 under the License.
 */
 
-var util=require('util');
-var EventEmitter=require('events');
-var Escaper=require('./kiss-framing.js').Escaper;
-
-/**
-  @class
-  This class is a base class for some class that knows how to write data
-  to a KISS Connection.
-  @param bufferLength The length of the output buffer.  Defaults to 1024 if
-  undefined.
-*/
-module.exports=function(bufferLength) {
-  this.escaper=new Escaper(bufferLength?bufferLength:1024);
-}
-
-util.inherits(module.exports, EventEmitter);
-
-module.exports.prototype.data=function(data) {
-  buffer=this.escaper.escape(data);
-  this.write(buffer);
-  this.flush();
-}
+describe('The Buffer class', function() {
+  it('can be allocated and copied', function() {
+    var buf1=new Buffer(256);
+    var buf2=new Buffer(buf1);
+  })
+});
