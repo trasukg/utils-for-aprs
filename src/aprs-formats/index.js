@@ -259,6 +259,21 @@ var parseCommentThatMayHaveAltitudeOrWeather=function() {
 }
 exports.parseCommentThatMayHaveAltitudeOrWeather=parseCommentThatMayHaveAltitudeOrWeather;
 
-var parseAddresseee=function() {
+var parseAddressee=function() {
   this.frame.addressee=this.lexer.advanceFixed(9).trim();
+  this.lexer.advance();
 }
+exports.parseAddressee=parseAddressee;
+
+var parseMessageText=function() {
+  var text=this.lexer.theRest();
+  var result=/^([^{]*)([{]([^}]*))?(([}])(.*))?$/.exec(text);
+  if(!result) {
+    throw new exceptions.FormatError('Bad format for message');
+  }
+  this.frame.message=result[1];
+  this.frame.messageId=result[3];
+  this.frame.senderIsReplyAckCapable=(result[5]=='}');
+  this.frame.replyAck=result[6];
+}
+exports.parseMessageText=parseMessageText;

@@ -154,4 +154,25 @@ describe("The APRS info parser", function() {
     expect(frame.position.symbolTableId).toBeDefined();
     expect(frame.position.symbolId).toBeDefined();
   });
+  it("takes the 550th sample (Message) and parses it",
+  function() {
+    var input=new Buffer(sampleFrames[550]);
+    var parser=new KISSFrameParser();
+    parser.setInput(input);
+    var frame=parser.parseFrame();
+    console.log("To, Info field is [%s][%s]",
+      ax25utils.addressToString(frame.destination),
+      frame.info);
+    aprsParser.parse(frame);
+    // Should get back a position in the same form that html5 would return it.
+    expect(frame.dataType).toBe('message');
+    expect(frame.position).toBeUndefined();
+    // The two following fields are extensions to the html5 Position object,
+    // for APRS.
+    expect(frame.addressee).toBe('VE3RSB');
+    expect(frame.message).toBe('This is a test message.');
+    expect(frame.messageId).toBeDefined();
+    expect(frame.messageId).toBe('m0001');
+    expect(frame.senderIsReplyAckCapable).toBeFalsy();
+  });
 });
