@@ -25,7 +25,7 @@ under the License.
 */
 var path=require('path');
 var util=require('util');
-var SocketKISSFrameEndpoint=require('./src/SocketKISSFrameEndpoint.js');
+var ServerSocketKISSFrameEndpoint=require('./src/ServerSocketKISSFrameEndpoint.js');
 var APRSProcessor=require("./src/aprs-processor.js");
 
 console.log("process.argv=" + process.argv);
@@ -41,7 +41,7 @@ if (process.argv.length != 3) {
 */
 
 //Create the endpoint
-var endpoint=new SocketKISSFrameEndpoint();
+var endpoint=new ServerSocketKISSFrameEndpoint();
 endpoint.host="localhost";
 endpoint.port=process.argv[2];
 var aprsProcessor=new APRSProcessor();
