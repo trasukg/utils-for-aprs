@@ -44,8 +44,8 @@ util.inherits(module.exports, EventEmitter);
   @alias module:utils-for-aprs.KISSConnection.data
 */
 module.exports.prototype.data=function(data) {
-  buffer=this.escaper.escapeAndWriteKISSCommand(data);
-  this.writeOutput(buffer);
+  buffer=this.escaper.escape(data);
+  this.write(buffer);
   this.flush();
 }
 

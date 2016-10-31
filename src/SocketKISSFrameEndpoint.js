@@ -114,6 +114,10 @@ var SocketKISSConnection=function(socket,endpoint) {
 
 util.inherits(SocketKISSConnection, KISSConnection);
 
-SocketKISSConnection.write=function(buffer) {
-  this.port.data(buffer);
+SocketKISSConnection.prototype.write=function(buffer) {
+  this.socket.write(buffer);
+}
+
+SocketKISSConnection.prototype.flush=function() {
+  // No-op.
 }

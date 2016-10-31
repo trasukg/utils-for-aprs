@@ -81,7 +81,7 @@ SerialKISSFrameEndpoint.prototype.openConnection=function() {
   self.port.on('data', function(data) {
     // Run the data through the KISSFrameParser.
     // It will emit a 'data' event when it has a frame.
-    self.kissFrameParser(self, data);
+    self.kissFrameParser(self.connection, data);
   });
 }
 
@@ -119,6 +119,10 @@ var SerialKISSConnection=function(port, endpoint) {
 
 util.inherits(SerialKISSConnection, KISSConnection);
 
-SerialKISSConnection.write=function(buffer) {
-  this.port.data(buffer);
+SerialKISSConnection.prototype.write=function(buffer) {
+  this.port.write(buffer);
+};
+
+SerialKISSConnection.prototype.flush=function(buffer) {
+  // No-op
 }
