@@ -129,7 +129,7 @@ ServerSocketKISSFrameEndpoint.prototype.closeSocketAndEmitDisconnect=function() 
 module.exports=ServerSocketKISSFrameEndpoint;
 
 var ServerSocketKISSConnection=function(socket, endpoint) {
-  console.log('Setting up ServerSocketKISSConnection.  endpoint.prototype is =' + JSON.stringify(endpoint.prototype));
+  //console.log('Setting up ServerSocketKISSConnection.  endpoint.prototype is =' + JSON.stringify(endpoint.prototype));
   KISSConnection.apply(this);
   var self=this;
   self.socket=socket;

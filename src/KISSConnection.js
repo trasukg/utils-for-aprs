@@ -40,7 +40,7 @@ util.inherits(module.exports, EventEmitter);
 /**
   Write data to the connection.
   @param data A Buffer containing a KISS frame.  Should be unescaped, and
-  not contain the 'data' command.
+  typically starts with the 'data' command.
   @alias module:utils-for-aprs.KISSConnection.data
 */
 module.exports.prototype.data=function(data) {
@@ -51,7 +51,7 @@ module.exports.prototype.data=function(data) {
 
 /**
   Incoming Data Event.  The event payload is a buffer that contains a de-escaped
-  AX25 frame.
+  KISS frame.
   @event module:utils-for-aprs.KISSConnection#data
   @type {Buffer}
 */
