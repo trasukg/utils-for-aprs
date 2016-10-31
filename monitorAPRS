@@ -23,9 +23,9 @@ var serialport=require('serialport');
 var SerialPort=serialport.SerialPort;
 var path=require('path');
 var util=require('util');
-var framing=require('./kiss-framing.js');
-var KISSFrameParser=require("./kiss-frame-parser.js");
-var APRSInfoParser=require("./aprs-info-parser.js");
+var framing=require('./src/kiss-framing.js');
+var KISSFrameParser=require("./src/kiss-frame-parser.js");
+var APRSInfoParser=require("./src/aprs-info-parser.js");
 
 console.log("process.argv=" + process.argv);
 

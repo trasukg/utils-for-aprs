@@ -52,7 +52,6 @@ var states= require('./connection-machine-states.js');
 */
 var KISSFrameEndpoint=function() {
   EventEmitter.apply(this);
-  StateMachine.call(this, states, 'Idle');
   this.kissFrameParser=framing.tncFrameParser();
   /**
     Enable the endpoint.  Tells the endpoint to open its actual connection and
@@ -76,6 +75,8 @@ var KISSFrameEndpoint=function() {
     replaced by the state machine setup, to be an event on the state machine.
     */
   };
+  StateMachine.call(this, states, 'Idle');
+
 };
 
 util.inherits(KISSFrameEndpoint, EventEmitter);
@@ -89,7 +90,7 @@ util.inherits(KISSFrameEndpoint, EventEmitter);
   @abstract
 */
 KISSFrameEndpoint.prototype.openConnection=function() {
-
+  console.log("Whoops - the abstract openConnection got called!");
 }
 
 /**

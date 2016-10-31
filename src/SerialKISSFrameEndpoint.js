@@ -61,11 +61,14 @@ util.inherits(SerialKISSFrameEndpoint, KISSFrameEndpoint);
 SerialKISSFrameEndpoint.prototype.openConnection=function() {
   // The closures will be called in the context of the socket, so store the current
   // value of 'this' for use in the closures.
+  console.log("Attempting to open the serial port");
   var self=this;
   self.port=new SerialPort(self.device, self.options, function(err) {
     if(!err) {
+      console.log("connection succeeded");
       self.connectionSucceeded();
     } else {
+      console.log("connection failed");
       self.connectionFailed(err);
     }
   });

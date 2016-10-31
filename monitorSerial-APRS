@@ -64,10 +64,18 @@ endpoint.on('connect', function(connection) {
     aprsProcessor.data(frame);
   });
 });
+// Log interesting events...
+endpoint.on('error', function(err) {
+  console.log("Error on endpoint:" + err);
+});
 
 endpoint.on('disconnect', function() {
   console.log('Lost connection');
 });
 
 // Turn on the endpoint.  It will attempt to connect in a persistent fashion.
+console.log("Enabling the endpoint");
 endpoint.enable();
+setTimeout(function() {
+  console.log("Timeout was triggered.");
+}, 5000)
