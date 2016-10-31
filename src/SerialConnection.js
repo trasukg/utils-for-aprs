@@ -32,6 +32,10 @@ var SerialConnection=function(device, options) {
 
 util.inherits(SerialConnection, EventEmitter);
 
+/**
+  @extends EventEmitter
+  @constructor
+*/
 SerialConnection.prototype.openConnection=function() {
   this.port=new SerialPort(device, options, function(err) {
     if(!err) {

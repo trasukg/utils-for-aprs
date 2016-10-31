@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>Documentation Global</title>
+	<title>Documentation Class: KISSFrameEndpoint</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -86,13 +86,15 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Global</h1>
+	<h1 class="page-title">Class: KISSFrameEndpoint</h1>
 <section>
 
 <header>
     
         <h2>
+            <span class="ancestors"><a href="module-utils-for-aprs.html">utils-for-aprs</a>.</span>
         
+        KISSFrameEndpoint
         </h2>
         
     
@@ -103,8 +105,50 @@
     <div class="container-overview">
     
         
+<hr>
+<dt>
+    <h4 class="name" id="KISSFrameEndpoint"><span class="type-signature"></span>new KISSFrameEndpoint()</h4>
+    
+    
+</dt>
+<dd>
 
+    
+    <div class="description">
+        <p>This is an &quot;Endpoint&quot; that attempts to make a connection to a TCP KISS
+  device, e.g. an instance of the DireWolf soundcard modem.</p>
+<p>  Once enabled (by calling 'enable()'), the endpoint attempts to make a connection
+  to the host and port that have been set into its properties.</p>
+<p>  It will emit 'connect' and 'disconnect' events when it makes and/or loses a
+  connection.  If the initial connection fails, or the connection is lost, the
+  endpoint waits for a certain period of time (default 5s, configured by retryTime),
+  and then attempts to reconnect.</p>
+<p>  The 'connect' event delivers a KISSConnection object that represents the
+  connection. It scans the input for properly-framed KISS packets, removing any
+  byte-stuffing as required.  When a KISS frame is received, the endpoint emits a
+  'data' event, with the received frame as the argument.  A KISS frame can be sent
+  down the connection by calling the connection's 'data' method.</p>
+    </div>
+    
+
+    
+        <h5>Extends:</h5>
         
+
+
+    <ul>
+        <li>EventEmitter</li>
+    </ul>
+
+
+    
+
+    
+
+    
+    
+
+    
 <dl class="details">
     
 
@@ -144,9 +188,39 @@
 </dl>
 
 
-        
+    
+
+    
+    <h5>Fires:</h5>
+    <ul>
+        <li>KISSFrameEndpoint#event:connection</li>
+    </ul>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
     
     </div>
+
+    
+        <h3 class="subsection-title">Extends</h3>
+
+        
+
+
+    <ul>
+        <li>EventEmitter</li>
+    </ul>
+
 
     
 
@@ -167,7 +241,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="parseMessage"><span class="type-signature"></span>parseMessage()</h4>
+    <h4 class="name" id="closeConnectionAndEmitDisconnect"><span class="type-signature">&lt;abstract> </span>closeConnectionAndEmitDisconnect()</h4>
     
     
 </dt>
@@ -175,8 +249,8 @@
 
     
     <div class="description">
-        <p>Messages:
-    ':' <addressee> ':' <message-text> ['{' <message-number> ]</p>
+        <p>(Implemented by subclasses)
+  Close the connection and emit a 'disconnect' event.</p>
     </div>
     
 
@@ -246,7 +320,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="tncSimulator"><span class="type-signature"></span>tncSimulator()</h4>
+    <h4 class="name" id="disable"><span class="type-signature"></span>disable()</h4>
     
     
 </dt>
@@ -254,10 +328,339 @@
 
     
     <div class="description">
-        <p>This simulator function sets up an ongoing background timer that gets a
-  buffer from the packetBufferSource, then calls the deliveryFunction with it.</p>
-<p>  It starts out at an initial rate for some initial interval, then switches to
-  a sustained rate.</p>
+        <p>Disable the endpoint.  Tells the endpoint to close its actual connection and
+    cease trying to make connections.  Connections currently in process will
+    normall be closed.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="emitConnection"><span class="type-signature">&lt;abstract> </span>emitConnection()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>(implemented by subclasses)</p>
+<p>  The connection machine state table calls this function when the
+  Connected state is entered.  It should create a KISSConnection object that
+  is wrapped around the actual connection, and then emit a 'connect' event that
+  passes the KISSConnection object as its argument.  Clients can then subscribe
+  to either 'data' events on the KISSConnection to receive frames.  They can
+  also call 'data(frame)' on the KISSConnection to send a frame.  When the
+  connection gets closed, it will emit a 'closed' event, so the client knows to
+  stop using it.</p>
+<p>  When data arrives on the underlying port, it should be passed through the
+  kissFrameParser, such that the connection object emits a 'data' event that
+  contains the unescaped KISS frame, with the command header stripped.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="enable"><span class="type-signature"></span>enable()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Enable the endpoint.  Tells the endpoint to open its actual connection and
+    begin trying to make connections.  If a connection fails, the endpoint will
+    typically wait for five seconds and then try again, so long as the endpoint is
+    enabled.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="openConnection"><span class="type-signature">&lt;abstract> </span>openConnection()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>This function should open the physical connection.  It is called on
+  entry to the Connecting state.  On successful opening, it should call
+  'self.connectionSucceeded()' and on failure, it should call 'self.connectionFailed()',
+  as expected by the state machine.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="triggerWait"><span class="type-signature"></span>triggerWait()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Called by the state machine states to trigger a timer that will call
+  the timeout() method after a fixed time span (5000ms).</p>
     </div>
     
 
@@ -328,6 +731,94 @@
 
     
 
+    
+        <h3 class="subsection-title">Events</h3>
+
+        <dl>
+            
+<hr>
+<dt>
+    <h4 class="name" id="event:connection">connection</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Connection event</p>
+    </div>
+    
+
+    
+
+    
+        <h5>Type: 
+<span class="param-type">KISSConnection</span>
+
+
+</h5>
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        </dl>
     
 </article>
 

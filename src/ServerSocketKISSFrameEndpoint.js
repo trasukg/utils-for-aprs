@@ -18,6 +18,8 @@ under the License.
 */
 
 /*
+@module utils-for-aprs.ServerSocketKISSFrameEndpoint
+
 This is an "Endpoint" that sets up a server socket and then waits for connections
 on it.
 
@@ -72,9 +74,9 @@ var states={
   }
 };
 
-var ServerSocketKISSFrameEndpoint=function(interface, port) {
+var ServerSocketKISSFrameEndpoint=function(iface, port) {
   StateMachine.call(this, states, 'Idle');
-  this.host=interface;
+  this.host=iface;
   this.port=port;
   this.kissFrameParser=framing.tncFrameParser();
 };
@@ -101,7 +103,7 @@ ServerSocketKISSFrameEndpoint.prototype.openSocket=function() {
   });
 }
 
-/**
+/*
   The connection machine state table calls this function when the
   Connected state is entered.  It should create a KISSConnection object that
   is wrapped around the actual connection, and then emit a 'connect' event that

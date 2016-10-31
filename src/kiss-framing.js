@@ -116,10 +116,11 @@ var unescapeStateMachine=function(bufferLength) {
 }
 
 /**
-  @constructor
   This machine takes an unescaped frame and escapes it.
   Calling it a state machine is probably a little generous, as it only has one
   state, but the pattern is the same as the 'unescapeStateMachine'.
+
+  @constructor
 */
 var Escaper=function(bufferLength) {
 

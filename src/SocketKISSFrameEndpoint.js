@@ -17,7 +17,13 @@ specific language governing permissions and limitations
 under the License.
 */
 
-/*
+
+var util=require('util');
+var net=require('net');
+var KISSFrameEndpoint=require('./KISSFrameEndpoint.js');
+var KISSConnection=require('./KISSConnection.js');
+
+/**
 This is an "Endpoint" that attempts to make a connection to a TCP KISS
 device, e.g. an instance of the DireWolf soundcard modem.
 
@@ -32,12 +38,11 @@ and then attempts to reconnect.
 Once connected, it scans the input for properly-framed KISS packets, removing any
 byte-stuffing as required.  When a KISS frame is received, the endpoint emits a
 'data' event, with the received frame as the argument.
-*/
 
-var util=require('util');
-var net=require('net');
-var KISSFrameEndpoint=require('./KISSFrameEndpoint.js');
-var KISSConnection=require('./KISSConnection.js');
+@alias utils-for-aprs.SocketKISSFrameEndpoint
+@extends utils-for-aprs.KISSFrameEndpoint
+@class
+*/
 
 var SocketKISSFrameEndpoint=function(host, port) {
   KISSFrameEndpoint.apply(this);
@@ -103,7 +108,7 @@ var SocketKISSConnection=function(socket,endpoint) {
   self.socket.on('data', function(data) {
     // Run the data through the KISSFrameParser.
     // It will emit a 'data' event when it has a frame.
-    endpoint.kissFrameParser.data(self, data);
+    endpoint.kissFrameParser(self, data);
   });
 }
 

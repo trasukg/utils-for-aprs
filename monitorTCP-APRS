@@ -42,7 +42,7 @@ if (process.argv.length != 3) {
 
 //Create the endpoint
 var endpoint=new SocketKISSFrameEndpoint();
-endpoint.host="localhost";
+endpoint.host="raspberrypi";
 endpoint.port=process.argv[2];
 var aprsProcessor=new APRSProcessor();
 

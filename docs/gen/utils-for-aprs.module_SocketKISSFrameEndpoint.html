@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>Documentation Index</title>
+	<title>Documentation Module: SocketKISSFrameEndpoint</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -33,28 +33,41 @@
 			<li class="dropdown">
 				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="module-utils-for-aprs.html">utils-for-aprs</a></li>
+					<li><a href="module-utils-for-aprs.html">utils-for-aprs</a></li><li><a href="utils-for-aprs.module_SocketKISSFrameEndpoint.html">utils-for-aprs.SocketKISSFrameEndpoint</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="Escaper.html">Escaper</a></li><li><a href="module-utils-for-aprs.KISSConnection.html">utils-for-aprs.KISSConnection</a></li><li><a href="module-utils-for-aprs.KISSFrameEndpoint.html">utils-for-aprs.KISSFrameEndpoint</a></li><li><a href="module-utils-for-aprs.SerialKISSFrameEndpoint.html">utils-for-aprs.SerialKISSFrameEndpoint</a></li><li><a href="module-utils-for-aprs-APRSProcessor.html">utils-for-aprs~APRSProcessor</a></li><li><a href="SerialConnection_openConnection.html">SerialConnection#openConnection</a></li><li><a href="utils-for-aprs.SocketKISSFrameEndpoint.html">utils-for-aprs.SocketKISSFrameEndpoint</a></li>
+					<li><a href="Escaper.html">Escaper</a></li><li><a href="module.exports.html">module.exports</a></li><li><a href="module-utils-for-aprs.KISSFrameEndpoint.html">utils-for-aprs.KISSFrameEndpoint</a></li><li><a href="module-utils-for-aprs-APRSProcessor.html">utils-for-aprs~APRSProcessor</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="events.list.html" class="dropdown-toggle" data-toggle="dropdown">Events<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="APRSProcessor.html#event:aprsData">APRSProcessor#event:aprsData</a></li><li><a href="module-utils-for-aprs.KISSConnection.html#event:data">utils-for-aprs.KISSConnection#event:data</a></li><li><a href="module-utils-for-aprs.KISSFrameEndpoint.html#event:connection">utils-for-aprs.KISSFrameEndpoint#event:connection</a></li>
+					<li><a href="APRSProcessor.html#event:aprsData">APRSProcessor#event:aprsData</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="global.html#parseMessage">parseMessage</a></li><li><a href="global.html#tncSimulator">tncSimulator</a></li>
+					<li><a href="global.html#emitConnectionTheconnectionmachinestatetablecallsthisfunctionwhentheConnectedstateisentered.ItshouldcreateaKISSConnectionobjectthatiswrappedaroundtheactualconnection,andthenemita'connect'eventthatpassestheKISSConnectionobjectasitsargument.Clientscanthensubscribetoeither'data'eventsontheKISSConnectiontoreceiveframes.Theycanalsocall'data(frame)'ontheKISSConnectiontosendaframe.Whentheconnectiongetsclosed,itwillemita'closed'event,sotheclientknowstostopusingit.Whendataarrivesontheunderlyingport,itshouldbepassedthroughthekissFrameParser,suchthattheconnectionobjectemitsa'data'eventthatcontainstheunescapedKISSframe,withthecommandheaderstripped.">emitConnection
+
+  The connection machine state table calls this function when the
+  Connected state is entered.  It should create a KISSConnection object that
+  is wrapped around the actual connection, and then emit a 'connect' event that
+  passes the KISSConnection object as its argument.  Clients can then subscribe
+  to either 'data' events on the KISSConnection to receive frames.  They can
+  also call 'data(frame)' on the KISSConnection to send a frame.  When the
+  connection gets closed, it will emit a 'closed' event, so the client knows to
+  stop using it.
+
+  When data arrives on the underlying port, it should be passed through the
+  kissFrameParser, such that the connection object emits a 'data' event that
+  contains the unescaped KISS frame, with the command header stripped.</a></li><li><a href="global.html#openConnection">openConnection</a></li><li><a href="global.html#parseMessage">parseMessage</a></li><li><a href="global.html#tncSimulator">tncSimulator</a></li>
 				</ul>
 			</li>
 			
@@ -86,71 +99,95 @@
 		<div id="main">
 			
 
+	<h1 class="page-title">Module: SocketKISSFrameEndpoint</h1>
+<section>
+
+<header>
+    
+</header>
+
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>This is an &quot;Endpoint&quot; that attempts to make a connection to a TCP KISS
+device, e.g. an instance of the DireWolf soundcard modem.</p>
+<p>Once enabled (by calling 'enable()'), the endpoint attempts to make a connection
+to the host and port that have been set into its properties.</p>
+<p>It will emit 'connect' and 'disconnect' events when it makes and/or loses a
+connection.  If the initial connection fails, or the connection is lost, the
+endpoint waits for a certain period of time (default 5s, configured by retryTime),
+and then attempts to reconnect.</p>
+<p>Once connected, it scans the input for properly-framed KISS packets, removing any
+byte-stuffing as required.  When a KISS frame is received, the endpoint emits a
+'data' event, with the received frame as the argument.</p></div>
+        
+
+        
+<dl class="details">
+    
+
 	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
 	
 
 
 
-
-
-
-
-
-
-
-
-	
 	
 
+	
+
+	
+
+	
+</dl>
 
 
+        
+    
+    </div>
 
+    
 
-    <section class="readme-section">
-        <article><h1>Utilities for APRS under Node.js</h1><p>APRS is the Advanced Packet Reporting System, designed by Bob Bruninga, WB4APR.</p>
-<p>It uses the Un-numbered Information (UI) packets of the AX.25 protocol to allow
-for stations to broadcast small information packets and messages to the other
-stations in the surrounding area (typically the local area covered by a digital
-repeater, or digipeater).</p>
-<p>This module is a set of utilities for dealing with &quot;RF&quot; packets, in other words
-the part of APRS that involves connecting a computer to a packet modem and
-then to a radio, in order to monitor and send APRS information over the air
-in a local area.  Currently these utilities don't deal with 'APRS-IS',
-the internet server part of APRS.  That may happen in the future, but right now
-the focus is on making it possible to deploy a portable station that uses
-modern techniques to provide an APRS client.</p>
-<p>As I start this effort in 2016, the two most popular APRS clients for Linux
-systems (like the RPi) seem to be <a href="https://xastir.org">Xastir</a> and
-<a href="http://ka2ddo.org/ka2ddo/YAAC.html">YAAC - Yet Another APRS Client</a>.</p>
-<p>Although these two clients are well-established, open-source, and I assume well-written,
-from my perspective, there are a couple of reasons I decided not to use them
-as a starting point.  I mention them here not to criticize either project, but
-to give the reader an idea where I'm coming from, and to explain the design
-goals behind this project and associated work.</p>
-<ul>
-<li>YAAC is written in Java.  That's good, but ordinarily with Java I'd want
-to use Maven to pull the library from Maven Central.  YAAC isn't in Maven
-Central, and although I could build it locally, it doesn't look to be
-structured in a Maven-friendly fashion.</li>
-<li>Xastir is written in 'C'.  Using the Motif (Xm) library.  I hated programming with Motif when
-it was new back in 1990, never mind now.</li>
-<li>My goal is to provide a webapp-based client.  Xastir is a non-starter from
-that perspective.</li>
-<li>Either of the languages above are likely to discourage community
-participation.  Especially the 'C' part.</li>
-<li>Both Xastir and YAAC are GPL-licensed.  I'm more partial to Apache.</li>
-<li>I happen to be playing with 'Node.js' a lot lately.</li>
-</ul>
-<p>These utilities are licensed under the Apache Software License, version 2.
-In fact, if we can build a community around APRS on Node.js, I'd love to see
-the project go through incubation at the ASF.</p>
-<p>Cheers,</p>
-<p>Greg Trasuk, VA3TSK</p>
-<p>The phrase APRS is a registered trademark of Bob Bruninga WB4APR.</p></article>
-    </section>
+    
 
+    
 
+    
 
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 
@@ -192,7 +229,7 @@ the project go through incubation at the ASF.</p>
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.2</a>
 	
-		on October 30th 2016, 11:37:51 pm
+		on October 24th 2016, 4:06:24 pm
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
