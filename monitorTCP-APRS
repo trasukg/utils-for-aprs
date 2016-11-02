@@ -25,15 +25,23 @@ under the License.
 */
 var path=require('path');
 var util=require('util');
-var SocketKISSFrameEndpoint=require('./src/SocketKISSFrameEndpoint.js');
-var APRSProcessor=require("./src/aprs-processor.js");
+var ax25utils=require('./src/index.js').ax25utils;
+var SocketKISSFrameEndpoint=require('./src/index.js').SocketKISSFrameEndpoint;
+var APRSProcessor=require('./src/index.js').APRSProcessor;
 
 console.log("process.argv=" + process.argv);
 
 if (process.argv.length != 3) {
-  console.log("Usage: node %s <port>", path.basename(process.argv[1]));
+  console.log("Usage: node %s <host>:<port>", path.basename(process.argv[1]));
   return;
 }
+
+var res=/([^\:]+):([0-9]+)/.exec(process.argv[2]);
+if(!res) {
+  console.log("Usage: node %s <host>:<port>", path.basename(process.argv[1]));
+}
+var host=res[1];
+var port=res[2];
 
 /*
   The pipeline is sort of like this:
@@ -42,13 +50,16 @@ if (process.argv.length != 3) {
 
 //Create the endpoint
 var endpoint=new SocketKISSFrameEndpoint();
-endpoint.host="raspberrypi";
-endpoint.port=process.argv[2];
+endpoint.host=host;
+endpoint.port=port;
 var aprsProcessor=new APRSProcessor();
 
 // When we get data on the aprsProcessor, show it on the console.
 aprsProcessor.on('aprsData', function(frame) {
-  console.log(frame);
+  console.log( ax25utils.addressToString(frame.source) +
+    '->' + ax25utils.addressToString(frame.destination) +
+    ' (' + ax25utils.repeaterPathToString(frame.repeaterPath) + ')' +
+    frame.info);
 });
 aprsProcessor.on('error', function(err) {
   console.log("Got eror event:" + err);
