@@ -62,7 +62,7 @@ aprsProcessor.on('aprsData', function(frame) {
     frame.info);
 });
 aprsProcessor.on('error', function(err) {
-  console.log("Got eror event:" + err);
+  console.log("Got error event:" + err);
 });
 
 // The endpoint provides de-escaped KISS frames.  Pass them on to the aprsProcessor
