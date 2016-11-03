@@ -56,13 +56,16 @@ var aprsProcessor=new APRSProcessor();
 
 // When we get data on the aprsProcessor, show it on the console.
 aprsProcessor.on('aprsData', function(frame) {
-  console.log( ax25utils.addressToString(frame.source) +
+  frame.receivedAt=new Date();
+
+  console.log( "[" + frame.receivedAt + "]" + ax25utils.addressToString(frame.source) +
     '->' + ax25utils.addressToString(frame.destination) +
     ' (' + ax25utils.repeaterPathToString(frame.repeaterPath) + ')' +
     frame.info);
 });
-aprsProcessor.on('error', function(err) {
+aprsProcessor.on('error', function(err, frame) {
   console.log("Got error event:" + err);
+  console.log("Frame is:" + JSON.stringify(frame));
 });
 
 // The endpoint provides de-escaped KISS frames.  Pass them on to the aprsProcessor
