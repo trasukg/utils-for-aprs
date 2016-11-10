@@ -50,6 +50,16 @@ function InfoLexer() {
       token: InfoLexer.COLON
     };
   });
+  this.addRule(/\*/, function() {
+    return {
+      token: InfoLexer.STAR
+    };
+  });
+  this.addRule(/_/, function() {
+    return {
+      token: InfoLexer.UNDERSCORE
+    };
+  });
   this.addRule(/\d{1,3}/, function(lexeme) {
     return {
       token: InfoLexer.INT,
@@ -91,3 +101,5 @@ InfoLexer.INT=3;
 InfoLexer.BINARY_OCTET=4;
 InfoLexer.FIXED_WIDTH=5;
 InfoLexer.COLON=6;
+InfoLexer.STAR=7;
+InfoLexer.UNDERSCORE=8;

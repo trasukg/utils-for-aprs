@@ -87,7 +87,7 @@ var parseTelemetryValues=function() {
   this.frame.telemetry.values=[];
   for (var i=0; i<5; i++) {
     if (this.lexer.current.token != InfoLexer.INT) {
-      console.log("token value", token);
+      //console.log("token value", token);
       throw new exceptions.FormatError("Telemetry value " + i + " should be integer");
     }
     this.frame.telemetry.values.push(this.lexer.current.tval);
@@ -118,6 +118,10 @@ var parseTelemetryValues=function() {
 var parsePositionWithTimestampNoMessaging=function() {
   this.frame.hasMessaging=false;
   this.frame.dataType='positionWithTimestamp';
+  parsePositionWithTimestampData.call(this);
+}
+
+var parsePositionWithTimestampData=function() {
   this.frame.position={
     coords: {}
   };
@@ -126,6 +130,7 @@ var parsePositionWithTimestampNoMessaging=function() {
   formats.parsePositionCoordinates.call(this);
   formats.parseDataExtension.call(this);
   formats.parseCommentThatMayHaveAltitudeOrWeather.call(this);
+
 }
 
 var parsePositionWithTimestampWithMessaging=function() {
@@ -134,11 +139,7 @@ var parsePositionWithTimestampWithMessaging=function() {
   this.frame.position={
     coords: {}
   };
-  formats.parseTimestamp.call(this);
-
-  formats.parsePositionCoordinates.call(this);
-  formats.parseDataExtension.call(this);
-  formats.parseCommentThatMayHaveAltitudeOrWeather.call(this);
+  parsePositionWithTimestampData.call(this);
 }
 
 var parsePositionWithoutTimestampWithMessaging=function() {
@@ -147,21 +148,23 @@ var parsePositionWithoutTimestampWithMessaging=function() {
   this.frame.position={
     coords: {}
   };
-  formats.parsePositionCoordinates.call(this);
-  formats.parseDataExtension.call(this);
-  formats.parseCommentThatMayHaveAltitudeOrWeather.call(this);
+  parsePositionWithoutTimestampData.call(this);
 }
 
 var parsePositionWithoutTimestampNoMessaging=function() {
   this.frame.hasMessaging=false;
   this.frame.dataType='positionWithoutTimestamp';
+  parsePositionWithoutTimestampData.call(this);
+}
+
+var parsePositionWithoutTimestampData=function() {
   this.frame.position={
     coords: {}
   };
   formats.parsePositionCoordinates.call(this);
   formats.parseDataExtension.call(this);
   formats.parseCommentThatMayHaveAltitudeOrWeather.call(this);
-}
+};
 
 var parseCurrentMicEData=function() {
   this.frame.position={
@@ -178,10 +181,27 @@ var parseMessage=function() {
   this.frame.dataType='message';
   formats.parseAddressee.call(this);
   if (this.lexer.current.token != InfoLexer.COLON) {
-    console.log('lexer.theRest=' + this.lexer.theRest());
+    //console.log('lexer.theRest=' + this.lexer.theRest());
     throw new exceptions.FormatError("Message format is incorrect - should be ':' after addressee");
   }
   formats.parseMessageText.call(this);
+}
+
+/**
+  Objects:
+    ';' <objectName> (positionWithTimestamp)
+*/
+var parseObject=function() {
+  this.frame.dataType='object';
+  formats.parseObjectName.call(this);
+  if (this.lexer.current.token === InfoLexer.STAR) {
+    this.frame.killed=false;
+  } else if (this.lexer.current.token != InfoLexer.UNDERSCORE) {
+    //console.log('lexer.theRest=' + this.lexer.theRest());
+    throw new exceptions.FormatError("Object format is incorrect - should be " +
+      "* or _ after name");
+  }
+  parsePositionWithTimestampData.call(this);
 }
 
 var dataTypeParsers={
@@ -193,5 +213,6 @@ var dataTypeParsers={
   33 : parsePositionWithoutTimestampNoMessaging,
   96 : parseCurrentMicEData,
   39 : parseCurrentMicEData,
-  58 : parseMessage
+  58 : parseMessage,
+  59 : parseObject
 };
