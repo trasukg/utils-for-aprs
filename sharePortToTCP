@@ -31,8 +31,6 @@ var util=require('util');
 var ServerSocketKISSFrameEndpoint=require('./src/ServerSocketKISSFrameEndpoint.js');
 var SerialKISSFrameEndpoint=require('./src/SerialKISSFrameEndpoint.js');
 
-console.log("process.argv=" + process.argv);
-
 if (process.argv.length != 4) {
   console.log("Usage: node %s <device> <port>", path.basename(process.argv[1]));
   return;
@@ -56,17 +54,23 @@ var serialEndpoint=new SerialKISSFrameEndpoint(device, {baudrate: 1200});
 */
 var serialConnections=new Set();
 var tcpConnections=new Set();
+var allConnections=new Set();
 
 // Log interesting events...
 serverEndpoint.on('connect', function(connection) {
-  console.log("TCP Endpoint received a connection." );
+  console.log("TCP Endpoint received a connection from " +
+    connection.socket.remoteAddress + ":" + connection.socket.remotePort);
   tcpConnections.add(connection);
+  allConnections.add(connection);
   connection.on('data', function(frame) {
-    relayToSerial(frame);
+    relayToAllBut(connection,frame);
   });
   connection.on('close', function() {
     tcpConnections.delete(connection);
-    console.log('A TCP connection was closed');
+    allConnections.delete(connection);
+    console.log("TCP connection from " +
+      connection.socket.remoteAddress + ":" + connection.socket.remotePort +
+      " was closed");
   });
 });
 
@@ -85,11 +89,13 @@ serialEndpoint.on('error', function(err) {
 serialEndpoint.on('connect', function(connection) {
   console.log("Connected to serial TNC on " + device );
   serialConnections.add(connection);
+  allConnections.add(connection);
   connection.on('data', function(frame) {
-    relayToTCP(frame);
+    relayToAllBut(connection, frame);
   });
   connection.on('disconnect', function() {
     serialConnections.delete(connection);
+    allConnections.delete(connection);
     console.log('Serial TNC connection was closed');
   });
 });
@@ -105,6 +111,17 @@ var relayToTCP=function(frame) {
   tcpConnections.forEach(function(connection){
     console.log("Serial -> TCP");
     connection.data(frame);
+  });
+}
+
+var relayToAllBut=function(source, frame) {
+  //console.log("Got frame from " + source);
+  allConnections.forEach(function(connection){
+    if (connection === source) {
+      //console.log("Skipping destination " + connection);
+    } else {
+      connection.data(frame);
+    }
   });
 }
 

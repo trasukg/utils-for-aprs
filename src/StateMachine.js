@@ -56,11 +56,11 @@ var StateMachine=function(stateDescriptions, initialState) {
         If the user-supplied state description doesn't specify a transition for
         a given event, then we'll throw an error.
       */
-      console.log("event '" + eventName + "', args=" + JSON.stringify(arguments));
-      console.log("...before transition, state=" + machine.currentState.name);
+      //console.log("event '" + eventName + "', args=" + JSON.stringify(arguments));
+      //console.log("...before transition, state=" + machine.currentState.name);
       var transitionFunc=machine.currentState[eventName];
       transitionFunc.apply(machine,arguments);
-      console.log("...after transition, state=" + machine.currentState.name);
+      //console.log("...after transition, state=" + machine.currentState.name);
     };
   });
 
