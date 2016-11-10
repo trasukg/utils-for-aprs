@@ -175,4 +175,30 @@ describe("The APRS info parser", function() {
     expect(frame.messageId).toBe('m0001');
     expect(frame.senderIsReplyAckCapable).toBeFalsy();
   });
+  it("takes the 145th sample (Object) and parses it",
+  function() {
+    var input=new Buffer(sampleFrames[145]);
+    var parser=new KISSFrameParser();
+    parser.setInput(input);
+    var frame=parser.parseFrame();
+    console.log("To, Info field is [%s][%s]",
+      ax25utils.addressToString(frame.destination),
+      frame.info);
+    aprsParser.parse(frame);
+    // Should get back a position in the same form that html5 would return it.
+    expect(frame.dataType).toBe('object');
+    expect(frame.position).toBeDefined();
+    expect(frame.position.coords.latitude).toBeCloseTo(43.07333,5);
+    expect(frame.position.coords.longitude).toBeDefined();
+    expect(frame.position.coords.accuracy).toBeCloseTo(26,0);
+    expect(frame.position.coords.speed).toBeUndefined()
+    expect(frame.position.timestamp).toBeDefined();
+    // The two following fields are extensions to the html5 Position object,
+    // for APRS.
+    expect(frame.destination.callsign).toBe('BEACON');
+    expect(frame.objectName).toBe('147.360ny');
+    expect(frame.killed).toBeFalsy();
+    expect(frame.position.symbolTableId).toBeDefined();
+    expect(frame.position.symbolId).toBeDefined();
+  });
 });

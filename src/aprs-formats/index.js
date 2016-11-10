@@ -105,7 +105,7 @@ var parseLatitude=function() {
   //console.log("Input for latitude is '%s'", field);
   var result=/^(\d{2})([\d\ ]{2}).([\d ]{2})([NS])$/.exec(field);
   if (result == undefined) {
-    throw new exceptions.FormatError("Bad format for latitude");
+    throw new exceptions.FormatError("Bad format for latitude: '" + field +"'");
   }
   var degrees=parseFloat(result[1]);
   var minutes=
@@ -277,3 +277,9 @@ var parseMessageText=function() {
   this.frame.replyAck=result[6];
 }
 exports.parseMessageText=parseMessageText;
+
+var parseObjectName=function() {
+  this.frame.objectName=this.lexer.advanceFixed(9).trim();
+  this.lexer.advance();
+}
+exports.parseObjectName=parseObjectName;
