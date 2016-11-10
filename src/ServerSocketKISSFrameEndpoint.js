@@ -87,7 +87,6 @@ ServerSocketKISSFrameEndpoint.prototype.openSocket=function() {
   // The closures will be called in the context of the socket, so store the current
   // value of 'this' for use in the closures.
   var self=this;
-  console.log('When setting up the socket, self.prototype=' + self.prototype);
   self.serverSocket= net.createServer();
   self.serverSocket.on('error', function(err) {
     //console.log("this=" + JSON.stringify(self));
