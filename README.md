@@ -97,3 +97,8 @@ Cheers,
 Greg Trasuk, VA3TSK
 
 The phrase APRS is a registered trademark of Bob Bruninga WB4APR.
+
+# Release Notes
+
+2.0.0 - Nov 11, 2016 - Endpoints are working as is port sharing and monitoring
+  
