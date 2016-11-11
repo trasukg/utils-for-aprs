@@ -38,7 +38,7 @@ if (process.argv.length != 4) {
 
 /*
   The pipeline is sort of like this:
-    Endpoint -> APRSProcessor -> Console
+    SerialKISSFrameEndpoint Endpoint -> sharePortToTCP -> ServerSocketKISSFrameEndpoint
 */
 
 var device=process.argv[2];
@@ -48,25 +48,19 @@ var port=process.argv[3];
 var serverEndpoint=new ServerSocketKISSFrameEndpoint("0.0.0.0", port);
 var serialEndpoint=new SerialKISSFrameEndpoint(device, {baudrate: 1200});
 
-/* There will only be one serial connection, but using an array allows
-  forEach to be used, which will automatically account for the case where
-  there is no connection.
+/* All connections are put into a Set, which lets us use forEach()
 */
-var serialConnections=new Set();
-var tcpConnections=new Set();
 var allConnections=new Set();
 
 // Log interesting events...
 serverEndpoint.on('connect', function(connection) {
   console.log("TCP Endpoint received a connection from " +
     connection.socket.remoteAddress + ":" + connection.socket.remotePort);
-  tcpConnections.add(connection);
   allConnections.add(connection);
   connection.on('data', function(frame) {
     relayToAllBut(connection,frame);
   });
   connection.on('close', function() {
-    tcpConnections.delete(connection);
     allConnections.delete(connection);
     console.log("TCP connection from " +
       connection.socket.remoteAddress + ":" + connection.socket.remotePort +
@@ -88,31 +82,15 @@ serialEndpoint.on('error', function(err) {
 
 serialEndpoint.on('connect', function(connection) {
   console.log("Connected to serial TNC on " + device );
-  serialConnections.add(connection);
   allConnections.add(connection);
   connection.on('data', function(frame) {
     relayToAllBut(connection, frame);
   });
   connection.on('disconnect', function() {
-    serialConnections.delete(connection);
     allConnections.delete(connection);
     console.log('Serial TNC connection was closed');
   });
 });
-
-var relayToSerial=function(frame) {
-  serialConnections.forEach(function(connection){
-    console.log("TCP -> Serial");
-    connection.data(frame);
-  });
-}
-
-var relayToTCP=function(frame) {
-  tcpConnections.forEach(function(connection){
-    console.log("Serial -> TCP");
-    connection.data(frame);
-  });
-}
 
 var relayToAllBut=function(source, frame) {
   //console.log("Got frame from " + source);
@@ -125,6 +103,10 @@ var relayToAllBut=function(source, frame) {
   });
 }
 
-// Turn on the endpoints.  It will attempt to connect in a persistent fashion.
+/* Turn on the endpoints.
+  - Serial Endpoint will attempt to connect to TNC
+  - ServerSocketKISSFrameEndpoint will open the server port and start
+  accepting connections
+*/
 serialEndpoint.enable();
 serverEndpoint.enable();
