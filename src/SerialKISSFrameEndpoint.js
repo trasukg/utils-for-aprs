@@ -20,7 +20,7 @@ under the License.
 
 
 var util=require('util');
-var SerialPort=require('serialport').SerialPort;
+var SerialPort=require('serialport');
 var KISSConnection=require('./KISSConnection.js');
 var KISSFrameEndpoint=require('./KISSFrameEndpoint');
 
