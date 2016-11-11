@@ -35,7 +35,7 @@ into 'data' event and 'packet-ended' event.  But realistically, APRS packets
 are going to be small.
 */
 
-function tncFrameParser() {
+var tncFrameParser=function() {
 
   var stateMachine=unescapeStateMachine(1024);
 
@@ -51,7 +51,7 @@ var FESC=0xdb;
 var TFEND=0xdc;
 var TFESC=0xdd;
 
-function unescapeStateMachine(bufferLength) {
+var unescapeStateMachine=function(bufferLength) {
 
   var outputBuffer=new Buffer(bufferLength);
   var contentLength=0;
@@ -116,12 +116,13 @@ function unescapeStateMachine(bufferLength) {
 }
 
 /**
-  @constructor
   This machine takes an unescaped frame and escapes it.
   Calling it a state machine is probably a little generous, as it only has one
   state, but the pattern is the same as the 'unescapeStateMachine'.
+
+  @constructor
 */
-function Escaper(bufferLength) {
+var Escaper=function(bufferLength) {
 
   var outputBuffer=new Buffer(bufferLength);
   var contentLength=0;
@@ -157,8 +158,9 @@ function Escaper(bufferLength) {
     for (var i=0; i<buffer.length; i++) {
       process(buffer[i]);
     }
+    output(FEND);
     // Return a copy of the buffer, in case it gets used anywhere else.
-    return Buffer.from(outputBuffer.slice(0, contentLength));
+    return new Buffer(outputBuffer.slice(0, contentLength));
   }
 
   this.escapeAndWriteKISSCommand=function(buffer) {
@@ -169,7 +171,9 @@ function Escaper(bufferLength) {
     }
     output(FEND);
     // Return a copy of the buffer, in case it gets used anywhere else.
-    return Buffer.from(outputBuffer.slice(0, contentLength));
+    var slicedBuffer=outputBuffer.slice(0, contentLength);
+    //console.log("slicedBuffer=" + slicedBuffer);
+    return new Buffer(slicedBuffer);
   }
 
 }

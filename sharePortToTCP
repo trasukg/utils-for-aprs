@@ -1,0 +1,130 @@
+#!/usr/bin/env node
+
+/*
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+*/
+
+/*
+  This is a command-line utility to share out a serial port TNC to one or more
+  KISS-TCP client programs.
+
+  For instance, you could have a serial TNC shared between APRX and a client
+  program like APRSIS32.
+*/
+var path=require('path');
+var util=require('util');
+var ServerSocketKISSFrameEndpoint=require('./src/ServerSocketKISSFrameEndpoint.js');
+var SerialKISSFrameEndpoint=require('./src/SerialKISSFrameEndpoint.js');
+
+if (process.argv.length != 4) {
+  console.log("Usage: node %s <device> <port>", path.basename(process.argv[1]));
+  return;
+}
+
+/*
+  The pipeline is sort of like this:
+    Endpoint -> APRSProcessor -> Console
+*/
+
+var device=process.argv[2];
+var port=process.argv[3];
+
+//Create the server socket endpoint
+var serverEndpoint=new ServerSocketKISSFrameEndpoint("0.0.0.0", port);
+var serialEndpoint=new SerialKISSFrameEndpoint(device, {baudrate: 1200});
+
+/* There will only be one serial connection, but using an array allows
+  forEach to be used, which will automatically account for the case where
+  there is no connection.
+*/
+var serialConnections=new Set();
+var tcpConnections=new Set();
+var allConnections=new Set();
+
+// Log interesting events...
+serverEndpoint.on('connect', function(connection) {
+  console.log("TCP Endpoint received a connection from " +
+    connection.socket.remoteAddress + ":" + connection.socket.remotePort);
+  tcpConnections.add(connection);
+  allConnections.add(connection);
+  connection.on('data', function(frame) {
+    relayToAllBut(connection,frame);
+  });
+  connection.on('close', function() {
+    tcpConnections.delete(connection);
+    allConnections.delete(connection);
+    console.log("TCP connection from " +
+      connection.socket.remoteAddress + ":" + connection.socket.remotePort +
+      " was closed");
+  });
+});
+
+serverEndpoint.on('listen', function() {
+  console.log("KISS TCP server established - listening for connections on port " + [port]);
+});
+
+serverEndpoint.on('error', function(err) {
+  console.log("Error on server endpoint:" + err);
+});
+
+serialEndpoint.on('error', function(err) {
+  console.log("Error on serial TNC endpoint:" + err);
+});
+
+serialEndpoint.on('connect', function(connection) {
+  console.log("Connected to serial TNC on " + device );
+  serialConnections.add(connection);
+  allConnections.add(connection);
+  connection.on('data', function(frame) {
+    relayToAllBut(connection, frame);
+  });
+  connection.on('disconnect', function() {
+    serialConnections.delete(connection);
+    allConnections.delete(connection);
+    console.log('Serial TNC connection was closed');
+  });
+});
+
+var relayToSerial=function(frame) {
+  serialConnections.forEach(function(connection){
+    console.log("TCP -> Serial");
+    connection.data(frame);
+  });
+}
+
+var relayToTCP=function(frame) {
+  tcpConnections.forEach(function(connection){
+    console.log("Serial -> TCP");
+    connection.data(frame);
+  });
+}
+
+var relayToAllBut=function(source, frame) {
+  //console.log("Got frame from " + source);
+  allConnections.forEach(function(connection){
+    if (connection === source) {
+      //console.log("Skipping destination " + connection);
+    } else {
+      connection.data(frame);
+    }
+  });
+}
+
+// Turn on the endpoints.  It will attempt to connect in a persistent fashion.
+serialEndpoint.enable();
+serverEndpoint.enable();

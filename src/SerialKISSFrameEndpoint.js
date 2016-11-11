@@ -17,7 +17,14 @@ specific language governing permissions and limitations
 under the License.
 */
 
-/*
+
+
+var util=require('util');
+var SerialPort=require('serialport');
+var KISSConnection=require('./KISSConnection.js');
+var KISSFrameEndpoint=require('./KISSFrameEndpoint');
+
+/**
 This is an "Endpoint" that attempts to make a connection to a TCP KISS
 device, e.g. an instance of the DireWolf soundcard modem.
 
@@ -32,13 +39,11 @@ and then attempts to reconnect.
 Once connected, it scans the input for properly-framed KISS packets, removing any
 byte-stuffing as required.  When a KISS frame is received, the endpoint emits a
 'data' event, with the received frame as the argument.
+@alias module:utils-for-aprs.SerialKISSFrameEndpoint
+@extends KISSFrameEndpoint
+@fires KISSFrameEndpoint#connection
+@constructor
 */
-
-var util=require('util');
-var SerialPort=require('serialport').SerialPort;
-var KISSConnection=require('./KISSConnection.js');
-var KISSFrameEndpoint=require('./KISSFrameEndpoint');
-
 var SerialKISSFrameEndpoint=function(device, options) {
   KISSFrameEndpoint.apply(this);
   this.device=device;
@@ -47,14 +52,23 @@ var SerialKISSFrameEndpoint=function(device, options) {
 
 util.inherits(SerialKISSFrameEndpoint, KISSFrameEndpoint);
 
+/**
+  Open the serial connection, and then call connectionSucceeded() or connectionFailed()
+  as appropriate.  The state machine then transitions, and will look after
+  emitting the appropriate event.
+  @private
+*/
 SerialKISSFrameEndpoint.prototype.openConnection=function() {
   // The closures will be called in the context of the socket, so store the current
   // value of 'this' for use in the closures.
+  console.log("Attempting to open the serial port");
   var self=this;
   self.port=new SerialPort(self.device, self.options, function(err) {
     if(!err) {
+      console.log("connection succeeded");
       self.connectionSucceeded();
     } else {
+      console.log("connection failed");
       self.connectionFailed(err);
     }
   });
@@ -70,7 +84,7 @@ SerialKISSFrameEndpoint.prototype.openConnection=function() {
   self.port.on('data', function(data) {
     // Run the data through the KISSFrameParser.
     // It will emit a 'data' event when it has a frame.
-    self.kissFrameParser(self, data);
+    self.kissFrameParser(self.connection, data);
   });
 }
 
@@ -83,6 +97,8 @@ SerialKISSFrameEndpoint.prototype.openConnection=function() {
   also call 'data(frame)' on the KISSConnection to send a frame.  When the
   connection gets closed, it will emit a 'closed' event, so the client knows to
   stop using it.
+
+  @private
 */
 SerialKISSFrameEndpoint.prototype.emitConnect=function() {
   this.connection=new SerialKISSConnection(this.port, this);
@@ -106,6 +122,10 @@ var SerialKISSConnection=function(port, endpoint) {
 
 util.inherits(SerialKISSConnection, KISSConnection);
 
-SerialKISSConnection.write=function(buffer) {
-  this.port.data(buffer);
+SerialKISSConnection.prototype.write=function(buffer) {
+  this.port.write(buffer);
+};
+
+SerialKISSConnection.prototype.flush=function(buffer) {
+  // No-op
 }

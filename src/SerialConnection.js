@@ -32,6 +32,10 @@ var SerialConnection=function(device, options) {
 
 util.inherits(SerialConnection, EventEmitter);
 
+/**
+  @extends EventEmitter
+  @constructor
+*/
 SerialConnection.prototype.openConnection=function() {
   this.port=new SerialPort(device, options, function(err) {
     if(!err) {
@@ -52,8 +56,15 @@ SerialConnection.prototype.closeConnection=function() {
   this.port.close();
 }
 
+SerialConnection.prototype.closeSocketAndEmitDisconnect=function() {
+  this.closeConnection();
+  this.emit('disconnect');
+}
 SerialConnection.prototype.triggerWait=function() {
   // TODO: Put in a wait function.
 }
 
+SerialConnection.prototype.emitConnect=function() {
+  this.emit('connect');
+}
 module.exports=SerialConnection;

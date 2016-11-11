@@ -17,11 +17,9 @@ specific language governing permissions and limitations
 under the License.
 */
 
-/**
-@module utils-for-aprs
-*/
-exports.APRSProcessor=require("./aprs-processor.js");
-exports.ax25utils=require("./ax25-utils.js");
-exports.framing=require('./kiss-framing.js');
-exports.tncSimulator=require('./tnc-simulator.js');
-exports.SocketKISSFrameEndpoint=require('./SocketKISSFrameEndpoint.js');
+describe('The Buffer class', function() {
+  it('can be allocated and copied', function() {
+    var buf1=new Buffer(256);
+    var buf2=new Buffer(buf1);
+  })
+});

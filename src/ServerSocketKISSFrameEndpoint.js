@@ -18,6 +18,8 @@ under the License.
 */
 
 /*
+@module utils-for-aprs.ServerSocketKISSFrameEndpoint
+
 This is an "Endpoint" that sets up a server socket and then waits for connections
 on it.
 
@@ -39,15 +41,16 @@ KISS packets.
 var util=require('util');
 var net=require('net');
 var EventEmitter=require('events');
-var KISSFrameEndpoint=require('./KISSFrameEndpoint.js');
 var KISSConnection=require('./KISSConnection.js');
 var framing=require('./kiss-framing.js');
+var Escaper=framing.Escaper;
+var StateMachine=require('./StateMachine.js');
 
 var states={
   Idle: {
-    enable: 'Opening';
-    disable: 'Idle';
-    error: 'Idle';
+    enable: 'Opening',
+    disable: 'Idle',
+    error: 'Idle',
     timeout: 'Idle'
   },
   Opening: {
@@ -71,14 +74,14 @@ var states={
   }
 };
 
-var ServerSocketKISSFrameEndpoint=function(interface, port) {
-  EventEmitter.apply(this);
+var ServerSocketKISSFrameEndpoint=function(iface, port) {
   StateMachine.call(this, states, 'Idle');
-  this.host=interface;
+  this.host=iface;
   this.port=port;
+  this.kissFrameParser=framing.tncFrameParser();
 };
 
-util.inherits(SocketKISSFrameEndpoint, EventEmitter);
+util.inherits(ServerSocketKISSFrameEndpoint, StateMachine);
 
 ServerSocketKISSFrameEndpoint.prototype.openSocket=function() {
   // The closures will be called in the context of the socket, so store the current
@@ -90,8 +93,8 @@ ServerSocketKISSFrameEndpoint.prototype.openSocket=function() {
     console.log("Got error:" + err);
     self.error(err);
   });
-  self.serverSocket.on('connect', function(socket) {
-    var connection=new ServerSocketKISSConnection(socket, this);
+  self.serverSocket.on('connection', function(socket) {
+    var connection=new ServerSocketKISSConnection(socket, self);
     self.emit('connect', connection);
   });
   self.serverSocket.listen({ host: self.host, port: self.port }, function() {
@@ -99,7 +102,7 @@ ServerSocketKISSFrameEndpoint.prototype.openSocket=function() {
   });
 }
 
-/**
+/*
   The connection machine state table calls this function when the
   Connected state is entered.  It should create a KISSConnection object that
   is wrapped around the actual connection, and then emit a 'connect' event that
@@ -109,11 +112,11 @@ ServerSocketKISSFrameEndpoint.prototype.openSocket=function() {
   connection gets closed, it will emit a 'closed' event, so the client knows to
   stop using it.
 */
-SocketKISSFrameEndpoint.prototype.emitListening=function() {
+ServerSocketKISSFrameEndpoint.prototype.emitListening=function() {
   this.emit('listening');
 }
 
-SocketKISSFrameEndpoint.prototype.closeSocketAndEmitDisconnect=function() {
+ServerSocketKISSFrameEndpoint.prototype.closeSocketAndEmitDisconnect=function() {
   console.log("Closing server socket");
   this.serverSocket.close();
   this.serverSocket.getConnections().forEach(function(socket) {
@@ -122,26 +125,30 @@ SocketKISSFrameEndpoint.prototype.closeSocketAndEmitDisconnect=function() {
   this.emit('disconnect');
 }
 // Export the endpoint constructor.
-module.exports=SocketKISSFrameEndpoint;
+module.exports=ServerSocketKISSFrameEndpoint;
 
-var ServerSocketKISSConnection=function(socket,endpoint) {
+var ServerSocketKISSConnection=function(socket, endpoint) {
+  //console.log('Setting up ServerSocketKISSConnection.  endpoint.prototype is =' + JSON.stringify(endpoint.prototype));
   KISSConnection.apply(this);
   var self=this;
-  var kissFrameParser=framing.tncFrameParser();
-  self.escaper=new Escaper(1024);
   self.socket=socket;
   self.socket.on('close', function() {
     console.log('Got socket closed event.');
-  })
+    self.emit('close');
+  });
   self.socket.on('data', function(data) {
     // Run the data through the KISSFrameParser.
     // It will emit a 'data' event when it has a frame.
-    kissFrameParser.data(self, data);
+    endpoint.kissFrameParser(self, data);
   });
 }
 
-util.inherits(SocketKISSConnection, KISSConnection);
+util.inherits(ServerSocketKISSConnection, KISSConnection);
 
-ServerSocketKISSConnection.writeOutput=function(buffer) {
+ServerSocketKISSConnection.prototype.write=function(buffer) {
   this.socket.write(buffer);
+}
+
+ServerSocketKISSConnection.prototype.flush=function() {
+  // No-op
 }
