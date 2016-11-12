@@ -204,6 +204,18 @@ var parseObject=function() {
   parsePositionWithTimestampData.call(this);
 }
 
+var parseStationCapability=function() {
+  this.frame.dataType='stationCapabilities';
+  var rs=/IGATE,MSG_CNT=(\d+),LOC_CNT=(\d+)/.exec(this.lexer.theRest());
+  if (!rs) {
+    throw new exceptions.FormatError("Unknown station capability:" +
+      this.lexer.theRest());
+  }
+  this.frame.capability='IGATE';
+  this.frame.messageCount=parseInt(rs[1]);
+  this.frame.localStationCount=parseInt(rs[2]);
+}
+
 var dataTypeParsers={
   62 : parseStatus,
   84 : parseTelemetry,
@@ -214,5 +226,6 @@ var dataTypeParsers={
   96 : parseCurrentMicEData,
   39 : parseCurrentMicEData,
   58 : parseMessage,
-  59 : parseObject
+  59 : parseObject,
+  60 : parseStationCapability
 };

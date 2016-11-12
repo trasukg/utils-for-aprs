@@ -201,4 +201,23 @@ describe("The APRS info parser", function() {
     expect(frame.position.symbolTableId).toBeDefined();
     expect(frame.position.symbolId).toBeDefined();
   });
+  it("takes the 339th sample (Station Capabilities) and parses it",
+  function() {
+    var input=new Buffer(sampleFrames[339]);
+    var parser=new KISSFrameParser();
+    parser.setInput(input);
+    var frame=parser.parseFrame();
+    console.log("To, Info field is [%s][%s]",
+      ax25utils.addressToString(frame.destination),
+      frame.info);
+    aprsParser.parse(frame);
+    // Should get station capabilities
+    expect(frame.dataType).toBe('stationCapabilities');
+    expect(frame.source.callsign).toBe('VE3YAP');
+    expect(frame.position).toBeUndefined();
+    expect(frame.destination.callsign).toBe('APU25N');
+    expect(frame.capability).toBe('IGATE');
+    expect(frame.messageCount).toBe(413);
+    expect(frame.localStationCount).toBe(35);
+  });
 });
