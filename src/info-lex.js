@@ -45,6 +45,11 @@ function InfoLexer() {
       token: InfoLexer.COMMA
     };
   });
+  this.addRule(/-/, function() {
+    return {
+      token: InfoLexer.DASH
+    };
+  });
   this.addRule(/:/, function() {
     return {
       token: InfoLexer.COLON
@@ -60,6 +65,11 @@ function InfoLexer() {
       token: InfoLexer.UNDERSCORE
     };
   });
+  this.addRule(/>/, function() {
+    return {
+      token: InfoLexer.GREATER_THAN
+    };
+  });
   this.addRule(/\d{1,3}/, function(lexeme) {
     return {
       token: InfoLexer.INT,
@@ -72,7 +82,12 @@ function InfoLexer() {
       tval: parseInt(lexeme,2)
     };
   });
-
+  this.addRule(/[a-zA-Z0-9]+/ , function(lexeme) {
+    return {
+      token: InfoLexer.CSTEXT,
+      tval: lexeme
+    }
+  });
   this.advance=function() {
     this.current=this.lex();
   }
@@ -103,3 +118,6 @@ InfoLexer.FIXED_WIDTH=5;
 InfoLexer.COLON=6;
 InfoLexer.STAR=7;
 InfoLexer.UNDERSCORE=8;
+InfoLexer.DASH=9;
+InfoLexer.GREATER_THAN=10;
+InfoLexer.CSTEXT=11;

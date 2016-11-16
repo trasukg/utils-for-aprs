@@ -31,17 +31,21 @@ module.exports=APRSInfoParser;
 
 APRSInfoParser.prototype.parse=function(frame) {
   this.frame=frame;
-  frame.dataTypeChar=frame.info.charCodeAt(0);
-  var parser=dataTypeParsers[frame.dataTypeChar];
-  if (parser == undefined) {
-    throw new exceptions.InfoError(sprintf("%d (%s)",
-      frame.dataTypeChar, String.fromCharCode(frame.dataTypeChar)));
-  }
   // Prime the lexical analyzer for the rest of the frame.
-  this.lexer.setInput(frame.info.slice(1));
-  parser.call(this);
+  this.lexer.setInput(frame.info);
+  parseInfo.call(this);
   this.frame=undefined;
 }
+
+var parseInfo=function() {
+  this.frame.dataTypeChar=this.lexer.advanceFixed(1).charCodeAt(0);
+  var parser=dataTypeParsers[this.frame.dataTypeChar];
+  if (parser == undefined) {
+    throw new exceptions.InfoError(sprintf("%d (%s)",
+      this.frame.dataTypeChar, String.fromCharCode(this.frame.dataTypeChar)));
+  }
+  parser.call(this);
+};
 
 var parseStatus=function() {
   this.frame.dataType='status';
@@ -216,6 +220,55 @@ var parseStationCapability=function() {
   this.frame.localStationCount=parseInt(rs[2]);
 }
 
+var parseThirdPartyTraffic=function() {
+  // Transfer the source, destination and path to forwardingXYZ
+  this.frame.forwardingSource=this.frame.source;
+  this.frame.forwardingRepeaterPath=this.frame.repeaterPath;
+  this.frame.forwardingDestination=this.frame.destination;
+  delete this.frame.destination;
+  delete this.frame.source;
+  delete this.frame.repeaterPath;
+
+  // Get the lexer started (this isn't done by the parse() function).
+  this.lexer.advance();
+
+  parseThirdPartyHeader.call(this);
+  parseThirdPartyData.call(this);
+};
+
+var parseThirdPartyHeader=function() {
+  this.frame.source=formats.parseTNC2Callsign.call(this);
+  if (this.lexer.current.token != InfoLexer.GREATER_THAN) {
+    throw new exceptions.FormatError("Third-party header format is incorrect: " +
+      "should include '>'");
+  }
+  this.lexer.advance();
+  this.frame.destination=formats.parseTNC2Callsign.call(this);
+  this.frame.repeaterPath=[];
+  /*
+    The third-party header must include network ID and receiving gateway stn.
+    We treat this as a repeaterlist, and just keep parsing until the list no
+    longer continues (i.e. the next token isn't a comma).
+  */
+  parseRepeaterPathList.call(this);
+  if (this.lexer.current.token != InfoLexer.COLON) {
+    throw new exceptions.FormatError("Expected ':' after third-party header");
+  }
+
+};
+
+var parseRepeaterPathList=function() {
+  if(this.lexer.current.token==InfoLexer.COMMA) {
+    this.lexer.advance();
+    this.frame.repeaterPath.push(formats.parseTNC2Callsign.call(this));
+    parseRepeaterPathList.call(this);
+  }
+}
+var parseThirdPartyData=function() {
+  this.frame.info=this.lexer.theRest();
+  parseInfo.call(this);
+};
+
 var dataTypeParsers={
   62 : parseStatus,
   84 : parseTelemetry,
@@ -227,5 +280,6 @@ var dataTypeParsers={
   39 : parseCurrentMicEData,
   58 : parseMessage,
   59 : parseObject,
-  60 : parseStationCapability
+  60 : parseStationCapability,
+  125 : parseThirdPartyTraffic
 };

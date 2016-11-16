@@ -20,8 +20,8 @@ under the License.
 var sprintf=require("sprintf-js").sprintf;
 
 var addressToString=function(address) {
-  return (address.ssid==0)?
-    address.callsign:sprintf("%s-%d", address.callsign, address.ssid);
+  return (address.ssid===0 || address.ssid ==='')?
+    address.callsign:sprintf("%s-%s", address.callsign, address.ssid);
 }
 exports.addressToString=addressToString;
 
