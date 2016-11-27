@@ -54,9 +54,15 @@ var APRSProcessor=function() {
   */
   this.data=function(data) {
     var frame;
+    this.frameParser.setInput(data);
     try {
-      this.frameParser.setInput(data);
       frame=this.frameParser.parseFrame();
+
+    } catch(err) {
+      this.emit('error', err);
+      return;
+    }
+    try {
       this.aprsParser.parse(frame);
       /**
         aprsData event
@@ -65,7 +71,9 @@ var APRSProcessor=function() {
       */
       this.emit('aprsData', frame);
     } catch(err) {
-      this.emit('error', err, frame);
+      frame.dataType='undecoded';
+      frame.undecodeReason=err.message;
+      this.emit('aprsData', frame);
     }
   };
 }
