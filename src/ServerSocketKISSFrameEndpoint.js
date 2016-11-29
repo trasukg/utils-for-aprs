@@ -124,6 +124,20 @@ ServerSocketKISSFrameEndpoint.prototype.closeSocketAndEmitDisconnect=function() 
   });
   this.emit('disconnect');
 }
+
+/**
+  Called by the state machine states to trigger a timer that will call
+  the timeout() method after a fixed time span (5000ms).
+*/
+ServerSocketKISSFrameEndpoint.prototype.triggerWait=function() {
+  // The closures will be called in the context of the socket, so store the current
+  // value of 'this' for use in the closures.
+  var self=this;
+  setTimeout(function() {
+    self.timeout();
+  }, 5000)
+}
+
 // Export the endpoint constructor.
 module.exports=ServerSocketKISSFrameEndpoint;
 
@@ -135,6 +149,10 @@ var ServerSocketKISSConnection=function(socket, endpoint) {
   self.socket.on('close', function() {
     console.log('Got socket closed event.');
     self.emit('close');
+  });
+  self.socket.on('error', function(err) {
+    console.log('Got socket error event.');
+    self.emit('error', err);
   });
   self.socket.on('data', function(data) {
     // Run the data through the KISSFrameParser.
