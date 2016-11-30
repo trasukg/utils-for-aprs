@@ -152,7 +152,7 @@ var ServerSocketKISSConnection=function(socket, endpoint) {
   });
   self.socket.on('error', function(err) {
     console.log('Got socket error event.');
-    self.emit('error', err);
+    self.emit('socketError', err);
   });
   self.socket.on('data', function(data) {
     // Run the data through the KISSFrameParser.
