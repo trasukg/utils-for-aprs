@@ -25,3 +25,6 @@ exports.ax25utils=require("./ax25-utils.js");
 exports.framing=require('./kiss-framing.js');
 exports.tncSimulator=require('./tnc-simulator.js');
 exports.SocketKISSFrameEndpoint=require('./SocketKISSFrameEndpoint.js');
+exports.newKISSFrame=require('./KISSFrameBuilder.js');
+exports.addressBuilder=require('./AddressBuilder.js');
+exports.validateFrame=require('./validateFrame.js')

@@ -60,7 +60,7 @@ describe("The APRS info parser", function() {
     var parser=new KISSFrameParser();
     parser.setInput(input);
     var frame=parser.parseFrame();
-    console.log("Info field is [%s]", frame.info);
+    console.log("Info field is [%s]\n", frame.info);
     aprsParser.parse(frame);
     // Should get back a position in the same form that geolocation API would return it.
     expect(frame.dataType).toBe('positionWithTimestamp');
@@ -83,7 +83,7 @@ describe("The APRS info parser", function() {
     var parser=new KISSFrameParser();
     parser.setInput(input);
     var frame=parser.parseFrame();
-    console.log("Info field is [%s]", frame.info);
+    console.log("Info field is [%s]\n", frame.info);
     aprsParser.parse(frame);
     // Should get back a position in the same form that html5 would return it.
     expect(frame.dataType).toBe('positionWithoutTimestamp');
@@ -114,7 +114,7 @@ describe("The APRS info parser", function() {
     var parser=new KISSFrameParser();
     parser.setInput(input);
     var frame=parser.parseFrame();
-    console.log("Info field is [%s]", frame.info);
+    console.log("Info field is [%s]\n", frame.info);
     aprsParser.parse(frame);
     // Should get back a position in the same form that html5 would return it.
     expect(frame.dataType).toBe('positionWithoutTimestamp');
@@ -136,7 +136,7 @@ describe("The APRS info parser", function() {
     var parser=new KISSFrameParser();
     parser.setInput(input);
     var frame=parser.parseFrame();
-    console.log("To, Info field is [%s][%s]",
+    console.log("To, Info field is [%s][%s]\n",
       ax25utils.addressToString(frame.destination),
       frame.info);
     aprsParser.parse(frame);
@@ -160,7 +160,7 @@ describe("The APRS info parser", function() {
     var parser=new KISSFrameParser();
     parser.setInput(input);
     var frame=parser.parseFrame();
-    console.log("To, Info field is [%s][%s]",
+    console.log("To, Info field is [%s][%s]\n",
       ax25utils.addressToString(frame.destination),
       frame.info);
     aprsParser.parse(frame);
@@ -175,13 +175,55 @@ describe("The APRS info parser", function() {
     expect(frame.messageId).toBe('m0001');
     expect(frame.senderIsReplyAckCapable).toBeFalsy();
   });
+  it("takes sample 191 (third-party Message) and parses it",
+  function() {
+    var input=new Buffer(sampleFrames[191]);
+    var parser=new KISSFrameParser();
+    parser.setInput(input);
+    var frame=parser.parseFrame();
+    console.log("To, Info field is [%s][%s]\n",
+      ax25utils.addressToString(frame.destination),
+      frame.info);
+    aprsParser.parse(frame);
+    // a message packet
+    // Source and repeater path are replaced by the third-party data
+    expect(frame.source.callsign).toBe('VE3LSG');
+    expect(frame.repeaterPath[0].callsign).toBe('TCPIP');
+    expect(frame.repeaterPath[0].hasBeenRepeated).toBeFalsy();
+    expect(frame.repeaterPath[1].callsign).toBe('VE3YAP');
+    expect(frame.repeaterPath[1].hasBeenRepeated).toBeTruthy();
+    expect(frame.forwardingSource.callsign).toBe('VE3YAP');
+    expect(frame.forwardingDestination.callsign).toBe('APU25N');
+
+    expect(frame.forwardingRepeaterPath[0].callsign).toBe('VE3KWW');
+    expect(frame.forwardingRepeaterPath[0].ssid).toBe(1);
+    expect(frame.forwardingRepeaterPath[0].hasBeenRepeated).toBeTruthy();
+
+    expect(frame.forwardingRepeaterPath[1].callsign).toBe('WIDE2');
+    expect(frame.forwardingRepeaterPath[1].ssid).toBe(1);
+    expect(frame.forwardingRepeaterPath[1].hasBeenRepeated).toBeFalsy();
+
+    expect(frame.forwardingRepeaterPath[2].callsign).toBe('VE3KSR');
+    expect(frame.forwardingRepeaterPath[2].ssid).toBe(0);
+    expect(frame.forwardingRepeaterPath[2].hasBeenRepeated).toBeFalsy();
+
+    expect(frame.dataType).toBe('message');
+    expect(frame.position).toBeUndefined();
+    expect(frame.addressee).toBe('VA3DVR');
+    expect(frame.message).toBe('Hi Martin!');
+    expect(frame.messageId).toBeDefined();
+    expect(frame.messageId).toBe('06\r'); // Seems wrong, but that's what's in the msg
+    expect(frame.senderIsReplyAckCapable).toBeFalsy();
+    // Frame info should be adjusted to be the third-party forwarded info
+    expect(frame.info).toMatch(/^:VA3DVR/);
+  });
   it("takes the 145th sample (Object) and parses it",
   function() {
     var input=new Buffer(sampleFrames[145]);
     var parser=new KISSFrameParser();
     parser.setInput(input);
     var frame=parser.parseFrame();
-    console.log("To, Info field is [%s][%s]",
+    console.log("To, Info field is [%s][%s]\n",
       ax25utils.addressToString(frame.destination),
       frame.info);
     aprsParser.parse(frame);
@@ -200,5 +242,24 @@ describe("The APRS info parser", function() {
     expect(frame.killed).toBeFalsy();
     expect(frame.position.symbolTableId).toBeDefined();
     expect(frame.position.symbolId).toBeDefined();
+  });
+  it("takes the 339th sample (Station Capabilities) and parses it",
+  function() {
+    var input=new Buffer(sampleFrames[339]);
+    var parser=new KISSFrameParser();
+    parser.setInput(input);
+    var frame=parser.parseFrame();
+    console.log("To, Info field is [%s][%s]\n",
+      ax25utils.addressToString(frame.destination),
+      frame.info);
+    aprsParser.parse(frame);
+    // Should get station capabilities
+    expect(frame.dataType).toBe('stationCapabilities');
+    expect(frame.source.callsign).toBe('VE3YAP');
+    expect(frame.position).toBeUndefined();
+    expect(frame.destination.callsign).toBe('APU25N');
+    expect(frame.capability).toBe('IGATE');
+    expect(frame.messageCount).toBe(413);
+    expect(frame.localStationCount).toBe(35);
   });
 });

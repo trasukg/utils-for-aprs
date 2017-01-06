@@ -18,6 +18,7 @@ under the License.
 */
 
 var exceptions=require("../exceptions.js");
+var InfoLexer=require("../info-lex.js");
 
 /*
   Timestamp is a fixed-length field - 7 bytes.
@@ -283,3 +284,28 @@ var parseObjectName=function() {
   this.lexer.advance();
 }
 exports.parseObjectName=parseObjectName;
+
+exports.parseTNC2Callsign=function() {
+  var ret={ ssid: 0, hasBeenRepeated: false };
+  if(this.lexer.current.token != InfoLexer.CSTEXT) {
+    throw new exceptions.FormatError("Bad format for callsign - expected CSTEXT, got " + this.lexer.current.token + ", theRest='" + this.lexer.theRest() + "'");
+  }
+  ret.callsign=this.lexer.current.tval;
+  this.lexer.advance();
+  if(this.lexer.current.token == InfoLexer.DASH) {
+    this.lexer.advance();
+    if (this.lexer.current.token == InfoLexer.INT) {
+      ret.ssid=this.lexer.current.tval;
+    } else if (this.lexer.current.token==InfoLexer.CSTEXT) {
+      ret.ssid=this.lexer.current.tval;
+    } else {
+      throw new exceptions.FormatError("Bad format for SSID - expected int or CSTEXT");
+    }
+    this.lexer.advance();
+  }
+  if (this.lexer.current.token==InfoLexer.STAR) {
+    ret.hasBeenRepeated=true;
+    this.lexer.advance();
+  }
+  return ret;
+}
