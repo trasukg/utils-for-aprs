@@ -48,9 +48,19 @@ var APRSProcessor=function() {
   this.aprsParser=new APRSInfoParser();
   /**
     Process a KISS frame.
-    The frame should be de-escaped and have the KISS command stripped.
+    The frame should be de-escaped, but includes the KISS data frame
+    command (i.e. it comes straight from the 'data' event of a
+    KISSConnection).
+
     If the frame decodes successfully, the APRSProcessor will emit an 'aprsData'
     event.  Otherwise it will emit an 'error' event.
+
+    Just a reminder - Node sees an unhandled 'error' event as an
+    exception (i.e. if a component emits 'error' and nobody handles it,
+    the event loop throws Error).
+    If that exception is thrown in the event handler for
+    (for instance) a TCP connection, that will potentially terminate the
+    entire server.  So make sure you listen for 'error'!
   */
   this.data=function(data) {
     var frame;

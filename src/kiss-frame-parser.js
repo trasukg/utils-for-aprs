@@ -21,6 +21,36 @@ var exceptions=require("./exceptions.js");
 var sprintf=require("sprintf-js").sprintf;
 var CRCGenerator=require("./crc-generator.js").CRCGenerator;
 
+/*
+  The KISSFrameParser takes a KISS frame in internal byte buffer format
+  and decodes the information in it, to yield a JSON object that is
+  a little more programmer-friendly.
+
+  The internal byte buffer format follows the AX25 KISS frame format
+  as laid out in http://www.ax25.net/kiss.aspx, with the following
+  other considerations:
+
+  - The data is not escaped.  There is no need to do any special handling
+  on the framing characters (below).  The endpoints handle the escaping and
+  de-escaping when the internal buffer is read from or written to a
+  KISSConnection
+  - Since the framing characters are not used, the endpoint can only
+  recognize the end of frame by the buffer length.  In other words, when
+  you pass a buffer to the endpoint, it writes-out the entire buffer.  So
+  when you construct a buffer, you need to slice(...) it to the
+  correct content length.  Similarly, when receiving a KISS frame from
+  a KISSConnection, the frame is the complete buffer - there's no TFEND
+  character.
+  - The KISS command byte is included at the beginning of the buffer.
+  Usually this will be '0', to indicate a data frame, but others can be
+  used.
+
+  Abbreviation            Description                    Hex value
+   FEND                 Frame  End                         C0
+   FESC                 Frame  Escape                      DB
+   TFEND                Transposed Frame End               DC
+   TFESC                Transposed Frame Escape            DD
+*/
 function KISSFrameParser() {
   this.crcgen=new CRCGenerator();
 }
@@ -108,7 +138,10 @@ KISSFrameParser.prototype.parseRepeaterPath=function() {
   return repeaterPath;
 }
 
-KISSFrameParser.prototype.parseFrame=function() {
+KISSFrameParser.prototype.parseFrame=function(inputBuffer) {
+  if(inputBuffer) {
+    this.setInput(inputBuffer);
+  }
   var frame={};
   if (this.nextByte==undefined) {
     return undefined;
