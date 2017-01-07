@@ -102,4 +102,5 @@ The phrase APRS is a registered trademark of Bob Bruninga WB4APR.
 
 2.0.0 - Nov 11, 2016 - Endpoints are working as is port sharing and monitoring  
 2.1.0 - Jan 6, 2017 - AddressBuilder and KISSFrameBuilder let you construct
-KISS frames for transmittal.
+KISS frames for transmittal.  
+2.1.1 - Fixed a minor format error in this README file.  
