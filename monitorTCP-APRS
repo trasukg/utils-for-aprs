@@ -25,9 +25,9 @@ under the License.
 */
 var path=require('path');
 var util=require('util');
-var ax25utils=require('./src/index.js').ax25utils;
-var SocketKISSFrameEndpoint=require('./src/index.js').SocketKISSFrameEndpoint;
-var APRSProcessor=require('./src/index.js').APRSProcessor;
+var ax25utils=require('utils-for-aprs').ax25utils;
+var SocketKISSFrameEndpoint=require('utils-for-aprs').SocketKISSFrameEndpoint;
+var APRSProcessor=require('utils-for-aprs').APRSProcessor;
 
 console.log("process.argv=" + process.argv);
 

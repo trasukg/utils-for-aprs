@@ -28,3 +28,5 @@ exports.SocketKISSFrameEndpoint=require('./SocketKISSFrameEndpoint.js');
 exports.newKISSFrame=require('./KISSFrameBuilder.js');
 exports.addressBuilder=require('./AddressBuilder.js');
 exports.validateFrame=require('./validateFrame.js')
+exports.ServerSocketKISSFrameEndpoint=require('./ServerSocketKISSFrameEndpoint.js');
+exports.SerialKISSFrameEndpoint=require('./SerialKISSFrameEndpoint.js');
