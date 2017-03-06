@@ -22,12 +22,17 @@ under the License.
 */
 exports.APRSProcessor=require("./aprs-processor.js");
 exports.ax25utils=require("./ax25-utils.js");
-exports.framing=require('./kiss-framing.js');
-exports.tncSimulator=require('./tnc-simulator.js');
-exports.SocketKISSFrameEndpoint=require('./SocketKISSFrameEndpoint.js');
-exports.newKISSFrame=require('./KISSFrameBuilder.js');
+/* Not in the browser
+  exports.framing=require('./kiss-framing.js');
+  exports.tncSimulator=require('./tnc-simulator.js');
+  exports.SocketKISSFrameEndpoint=require('./SocketKISSFrameEndpoint.js');
+  exports.newKISSFrame=require('./KISSFrameBuilder.js');
+*/
 exports.addressBuilder=require('./AddressBuilder.js');
 exports.validateFrame=require('./validateFrame.js')
-exports.ServerSocketKISSFrameEndpoint=require('./ServerSocketKISSFrameEndpoint.js');
-exports.SerialKISSFrameEndpoint=require('./SerialKISSFrameEndpoint.js');
-exports.WebSocketAprsDataEndpoint=require('./WebSocketAprsDataEndpoint.js');
+/* Not in browser
+  exports.ServerSocketKISSFrameEndpoint=require('./ServerSocketKISSFrameEndpoint.js');
+*/
+/*No serial in the browser...
+  exports.SerialKISSFrameEndpoint=require('./SerialKISSFrameEndpoint.js');
+*/

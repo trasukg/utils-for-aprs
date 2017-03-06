@@ -23,41 +23,36 @@ var Escaper=require('./kiss-framing.js').Escaper;
 
 /**
   This class is a base class for some class that knows how to write data
-  to a KISS Connection.
-  @alias module:utils-for-aprs.KISSConnection
-  @fires module:utils-for-aprs.KISSConnection#data
-  @fires module:utils-for-aprs.KISSConnection#close
+  to an AprsData connection.
+  @alias module:utils-for-aprs.AprsDataConnection
+  @fires module:utils-for-aprs.AprsDataConnection#data
+  @fires module:utils-for-aprs.AprsDataConnection#close
   @class
-  @param bufferLength The length of the output buffer.  Defaults to 1024 if
-  undefined.
 */
-module.exports=function(bufferLength) {
-  this.escaper=new Escaper(bufferLength?bufferLength:1024);
+module.exports=function() {
+
 }
 
 util.inherits(module.exports, EventEmitter);
 
 /**
-  Write data to the connection.
-  @param data A Buffer containing a KISS frame.  Should be unescaped, and
-  typically starts with the 'data' command.
-  @alias module:utils-for-aprs.KISSConnection.data
+  Write APRS data to the connection.
+  @param data An object containing an APRS packet.
+  @alias module:utils-for-aprs.AprsDataConnection.data
 */
-module.exports.prototype.data=function(data) {
-  buffer=this.escaper.escape(data);
-  this.write(buffer);
-  this.flush();
+module.exports.prototype.aprsData=function(aprsData) {
+
 }
 
 /**
   Incoming Data Event.  The event payload is a buffer that contains a de-escaped
   KISS frame.
-  @event module:utils-for-aprs.KISSConnection#data
-  @type {Buffer}
+  @event module:utils-for-aprs.AprsDataConnection#aprsData
+  @type {Object}
 */
 
 /**
   Close event.  The connection is being closed.
-  @event module:utils-for-aprs.KISSConnection#close
+  @event module:utils-for-aprs.AprsDataConnection#close
   @type {void}
 */

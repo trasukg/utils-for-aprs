@@ -1,8 +1,9 @@
 {
   "name": "utils-for-aprs",
-  "version": "2.1.1",
+  "version": "2.2.1",
   "description": "A suite of utilities for Advanced Packet Reporting System over a KISS TNC.",
   "main": "src/index.js",
+  "browser": "src/browser.js",
   "scripts": {
     "test": "jasmine"
   },
@@ -12,7 +13,12 @@
     "lex": "^1.7.9",
     "sprintf-js": "^1.0.3"
   },
-  "keywords": ["amateur radio", "aprs", "ax.25", "KISS"],
+  "keywords": [
+    "amateur radio",
+    "aprs",
+    "ax.25",
+    "KISS"
+  ],
   "repository": {
     "type": "git",
     "url": "git@github.com:trasukg/utils-for-aprs.git"
@@ -22,6 +28,7 @@
     "gulp": "^3.9.1",
     "gulp-jasmine": "^2.4.2",
     "gulp-jsdoc3": "^1.0.0",
-    "serialport": "^4.0.5"
+    "serialport": "^4.0.5",
+    "ws": "^2.2.0"
   }
 }
