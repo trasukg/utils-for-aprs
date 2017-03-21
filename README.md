@@ -104,3 +104,4 @@ The phrase APRS is a registered trademark of Bob Bruninga WB4APR.
 2.1.0 - Jan 6, 2017 - AddressBuilder and KISSFrameBuilder let you construct
 KISS frames for transmittal.  
 2.1.1 - Fixed a minor format error in this README file.  
+2.2.1 - Added support for Browserify and Web Socket endpoints.  
