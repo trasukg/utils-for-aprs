@@ -28,8 +28,9 @@ under the License.
 */
 var path=require('path');
 var util=require('util');
-var ServerSocketKISSFrameEndpoint=require('./src/ServerSocketKISSFrameEndpoint.js');
-var SerialKISSFrameEndpoint=require('./src/SerialKISSFrameEndpoint.js');
+var ServerSocketKISSFrameEndpoint=
+  require('utils-for-aprs').ServerSocketKISSFrameEndpoint;
+var SerialKISSFrameEndpoint=require('utils-for-aprs').SerialKISSFrameEndpoint;
 
 if (process.argv.length != 4) {
   console.log("Usage: node %s <device> <port>", path.basename(process.argv[1]));
