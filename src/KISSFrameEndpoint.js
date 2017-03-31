@@ -112,8 +112,8 @@ KISSFrameEndpoint.prototype.openConnection=function() {
 
   @abstract
 */
-KISSFrameEndpoint.prototype.emitConnection=function() {
-  this.emit('connection', undefined);
+KISSFrameEndpoint.prototype.emitConnect=function() {
+  this.emit('connect', undefined);
 }
 
 /**
