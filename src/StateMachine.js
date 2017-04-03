@@ -19,7 +19,7 @@ under the License.
 
 var util=require('util');
 
-var EventEmitter=require('events');
+//var EventEmitter=require('events');
 
 
 var StateMachine=function(stateDescriptions, initialState) {
@@ -59,7 +59,7 @@ var StateMachine=function(stateDescriptions, initialState) {
       //console.log("event '" + eventName + "', args=" + JSON.stringify(arguments));
       //console.log("...before transition, state=" + machine.currentState.name);
       var transitionFunc=machine.currentState[eventName];
-      transitionFunc.apply(machine,arguments);
+      return transitionFunc.apply(machine,arguments);
       //console.log("...after transition, state=" + machine.currentState.name);
     };
   });
@@ -112,8 +112,9 @@ var StateMachine=function(stateDescriptions, initialState) {
               console.log("Calling transition function with args=" +
                 JSON.stringify(arguments));
               */
-              transitionFunction.apply(machine,arguments);
+              var retval=transitionFunction.apply(machine,arguments);
               nextState.onEntry.call(machine);
+              return retval;
             };
           } else {
             newState[eventName]=function() {
@@ -122,7 +123,7 @@ var StateMachine=function(stateDescriptions, initialState) {
               console.log("Calling transition function with args=" +
                 JSON.stringify(arguments));
               */
-              transitionFunction.apply(machine,arguments);
+              return transitionFunction.apply(machine,arguments);
             };
           }
         }
@@ -145,6 +146,6 @@ var StateMachine=function(stateDescriptions, initialState) {
   machine.currentState=this[initialState];
 }
 
-util.inherits(StateMachine, EventEmitter);
+//util.inherits(StateMachine, EventEmitter);
 
 module.exports=StateMachine;

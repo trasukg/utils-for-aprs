@@ -21,10 +21,11 @@ var util=require('util');
 var StateMachine=require('./StateMachine.js');
 var EventEmitter=require('events');
 var AprsDataConnection=require('./AprsDataConnection.js');
+var Request=require('./Request');
 
 // 'connection-machine-states' contains a state machine description that has the
 // persistent connection behaviour that we want.
-var states= require('./connection-machine-states.js');
+var states= require('./aprs-data-endpoint-states.js');
 
 /**
   This is an "Endpoint" that attempts to make a connection to a TCP KISS
@@ -76,6 +77,8 @@ var AprsDataEndpoint=function() {
   };
   StateMachine.call(this, states, 'Idle');
 
+  this._outstandingRequests=new Map();
+  this._nextMessageId=1;
 };
 
 util.inherits(AprsDataEndpoint, EventEmitter);
@@ -111,8 +114,8 @@ AprsDataEndpoint.prototype.openConnection=function() {
 
   @abstract
 */
-AprsDataEndpoint.prototype.emitConnection=function() {
-  this.emit('connection', undefined);
+AprsDataEndpoint.prototype.emitConnect=function() {
+  this.emit('connect', undefined);
 }
 
 /**
@@ -136,6 +139,52 @@ AprsDataEndpoint.prototype.triggerWait=function() {
     self.timeout();
   }, 5000)
 }
+
+/**
+  (implemented by subclass)
+
+  Called to send data down the connected pipe.
+  data is an object that will be converted to JSON.
+*/
+AprsDataEndpoint.prototype._send=function(data) {
+  console.log("Sending data: " + JSON.stringify(data));
+}
+
+/** Initiate a request, storing the request data, etc. */
+AprsDataEndpoint.prototype.initiateRequest=function(data) {
+  data.msgId=this._nextMessageId++;
+  var request=new Request(data);
+  // Write the request out to the connected peer. */
+  var self=this;
+  // Add to list of outstanding requests.
+  self._outstandingRequests.set(data.msgId, request);
+  return request.send(
+    function(data) {self.send(data); },
+    function() {
+      console.log('Finished request ' + data.msgId);
+      self._outstandingRequests.delete(data.msgId);
+    });
+}
+
+/**
+  This method should be called by the subclass whenever data is received from
+  the opposite end of the connection.  It is used to manage answers to requests.
+*/
+AprsDataEndpoint.prototype._incoming_message = function (message) {
+    // See if this is a reply message
+    console.log("_incoming_message called with " + JSON.stringify(message));
+    if (message.replyTo) {
+      // Look up the request that goes with it.
+      var request=this._outstandingRequests.get(message.replyTo);
+      if (request) {
+        request.reply(message);
+        /* The promise.tap(...) added in initiateRequest() will remove the
+        request from the list of outstanding requests, when the request's promise
+        resolves.
+        */
+      }
+    }
+};
 
 /**
   Connection event

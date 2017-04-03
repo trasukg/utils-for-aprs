@@ -23,6 +23,7 @@ var net=require('net');
 var AprsDataEndpoint=require('./AprsDataEndpoint.js');
 var AprsDataConnection=require('./AprsDataConnection.js');
 var WebSocket=require('ws');
+var Request=require('./Request');
 
 /**
 This is an "Endpoint" that attempts to make a connection to a TCP KISS
@@ -93,6 +94,12 @@ WebSocketAprsDataEndpoint.prototype.closeConnectionAndEmitDisconnect=function() 
   this.connection.emit('close');
   this.emit('disconnect');
 }
+
+WebSocketAprsDataEndpoint.prototype._send=function(data) {
+  console.log("Sending data up the ws:" + JSON.stringify(data));
+  this.connection.socket.send(JSON.stringify(data));
+}
+
 // Export the endpoint constructor.
 module.exports=WebSocketAprsDataEndpoint;
 
@@ -109,6 +116,9 @@ var WebSocketAprsDataConnection=function(socket,endpoint) {
     if (message.aprsData) {
       // It will emit a 'data' event when it has a frame.
       endpoint.emit('aprsData', message.aprsData);
+    } else {
+      endpoint._incoming_message(message);
+      endpoint.emit('message', message);
     }
   });
 }
@@ -116,5 +126,5 @@ var WebSocketAprsDataConnection=function(socket,endpoint) {
 util.inherits(WebSocketAprsDataConnection, AprsDataConnection);
 
 WebSocketAprsDataConnection.prototype.aprsData=function(data) {
-  this.socket.write({aprsData: data});
+  this._send(JSON.stringify({aprsData: data}));
 }
