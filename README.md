@@ -105,4 +105,5 @@ The phrase APRS is a registered trademark of Bob Bruninga WB4APR.
 KISS frames for transmittal.  
 2.1.1 - Fixed a minor format error in this README file.  
 2.2.1 - Added support for Browserify and Web Socket endpoints.  
-2.2.2 - Added required dependency on 'ws'.
+2.2.2 - Added required dependency on 'ws'.  
+2.2.3 - Added dependency on 'bluebird'  
