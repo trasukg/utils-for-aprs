@@ -4,3 +4,4 @@ nohup.out
 node_modules/**
 docs/gen
 docs/gen/**
+/npm-debug.log

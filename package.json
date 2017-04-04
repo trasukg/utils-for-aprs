@@ -1,6 +1,6 @@
 {
   "name": "utils-for-aprs",
-  "version": "2.2.4",
+  "version": "2.2.5",
   "description": "A suite of utilities for Advanced Packet Reporting System over a KISS TNC.",
   "main": "src/index.js",
   "browser": "src/browser.js",
@@ -30,6 +30,6 @@
     "gulp": "^3.9.1",
     "gulp-jasmine": "^2.4.2",
     "gulp-jsdoc3": "^1.0.0",
-    "serialport": "^4.0.5",
+    "serialport": "^4.0.5"
   }
 }
