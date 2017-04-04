@@ -75,13 +75,14 @@ var states={
 };
 
 var ServerSocketKISSFrameEndpoint=function(iface, port) {
+  EventEmitter.apply(this);
   StateMachine.call(this, states, 'Idle');
   this.host=iface;
   this.port=port;
   this.kissFrameParser=framing.tncFrameParser();
 };
 
-util.inherits(ServerSocketKISSFrameEndpoint, StateMachine);
+util.inherits(ServerSocketKISSFrameEndpoint, EventEmitter);
 
 ServerSocketKISSFrameEndpoint.prototype.openSocket=function() {
   // The closures will be called in the context of the socket, so store the current
