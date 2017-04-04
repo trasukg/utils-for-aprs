@@ -107,3 +107,4 @@ KISS frames for transmittal.
 2.2.1 - Added support for Browserify and Web Socket endpoints.  
 2.2.2 - Added required dependency on 'ws'.  
 2.2.3 - Added required dependency on 'bluebird'.  
+2.2.4 - Fixed a problem with ServerSocketKISSFrameEndpoint.
