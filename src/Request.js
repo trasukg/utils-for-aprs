@@ -18,7 +18,7 @@ under the License.
 */
 
 var util=require('util');
-var StateMachine=require('./StateMachine');
+var StateMachine=require('@trasukg/state-machine');
 var Promise=require('bluebird');
 
 var states={

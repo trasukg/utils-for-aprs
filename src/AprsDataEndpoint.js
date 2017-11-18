@@ -18,7 +18,7 @@ under the License.
 */
 
 var util=require('util');
-var StateMachine=require('./StateMachine.js');
+var StateMachine=require('@trasukg/state-machine');
 var EventEmitter=require('events');
 var AprsDataConnection=require('./AprsDataConnection.js');
 var Request=require('./Request');

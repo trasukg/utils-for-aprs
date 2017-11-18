@@ -41,10 +41,10 @@ KISS packets.
 var util=require('util');
 var net=require('net');
 var EventEmitter=require('events');
-var KISSConnection=require('./KISSConnection.js');
-var framing=require('./kiss-framing.js');
+var KISSConnection=require('./KISSConnection');
+var framing=require('./kiss-framing');
 var Escaper=framing.Escaper;
-var StateMachine=require('./StateMachine.js');
+var StateMachine=require('@trasukg/state-machine');
 
 var states={
   Idle: {
