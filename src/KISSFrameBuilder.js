@@ -17,7 +17,59 @@ specific language governing permissions and limitations
 under the License.
 */
 
-var validateFrame=require('./validateFrame.js');
+const validateAddress=function(address) {
+  var callsignLength=address.callsign.length;
+  if (callsignLength>7) {
+    throw new exceptions.FormatError('Callsigns need to be 7 characters or less'
+      + ' (' + address.callsign + ')' + ' for KISS frames.');
+  }
+  if (typeof(address.ssid) === 'string' || address.ssid <0 || address.ssid>15) {
+    throw new exceptions.FormatError('SSID needs to be integer 0-15 for KISS frame.')
+  }
+}
+
+const SPACE_IN_CALLSIGN=' '.charCodeAt(0)<<1;
+
+const writeAddress=function(buffer, writeIndex, address){
+  validateAddress(address);
+  var callsignLength=address.callsign.length;
+  // We're going to casually ignore Unicode callsigns for now (are they even a thing?)
+  var i=0;
+  while(i<callsignLength) {
+    buffer[writeIndex++]=address.callsign.charCodeAt(i++)<<1;
+  }
+  while (i<6) {
+    buffer[writeIndex++]=SPACE_IN_CALLSIGN;
+    i++;
+  }
+  buffer[writeIndex++]=
+    (address.hasBeenRepeated?0x80:0)
+    | (address.ssid<<1)
+    | (address.rr<<5)
+    | (address.extensionBit?1:0)
+  return writeIndex;
+};
+
+const writeRepeaterPath=function(buffer, writeIndex, repeaterPath) {
+  for(var i=0; i<repeaterPath.length; i++) {
+    writeIndex=writeAddress(buffer, writeIndex, repeaterPath[i]);
+  }
+  return writeIndex;
+};
+
+const writeInfo=function(buffer, writeIndex, info) {
+  for (var i=0; i < info.length; i++) {
+    buffer[writeIndex++]=info.charCodeAt(i);
+  }
+  return writeIndex;
+};
+
+const writeByte=function(buffer, writeIndex, byte) {
+  buffer[writeIndex++]=byte;
+  return writeIndex;
+};
+
+const validateFrame=require('./validateFrame.js');
 
 var KISSFrameBuilder=function() {
   this.frame={};
@@ -53,56 +105,9 @@ KISSFrameBuilder.prototype.build=function() {
   writeIndex=writeByte(buffer, writeIndex, 0x03);
   // Protocol 0xf0 - no level-3 protocol
   writeIndex=writeByte(buffer, writeIndex, 0xf0);
-  writeIndex=writeInfo(buffer, writeIndex, this.frame.info);
+  writeInfo(buffer, writeIndex, this.frame.info);
   return buffer;
 }
-
-var SPACE_IN_CALLSIGN=' '.charCodeAt(0)<<1;
-
-var writeAddress=function(buffer, writeIndex, address){
-  var callsignLength=address.callsign.length;
-  if (callsignLength>7) {
-    throw new exceptions.FormatError('Callsigns need to be 7 characters or less'
-      + ' (' + address.callsign + ')' + ' for KISS frames.');
-  }
-  if (typeof(address.ssid) == 'string' || address.ssid <0 || address.ssid>15) {
-    throw new exceptions.FormatError('SSID needs to be integer 0-15 for KISS frame.')
-  }
-  // We're going to casually ignore Unicode callsigns for now (are they even a thing?)
-  var i=0;
-  while(i<callsignLength) {
-    buffer[writeIndex++]=address.callsign.charCodeAt(i++)<<1;
-  }
-  while (i<6) {
-    buffer[writeIndex++]=SPACE_IN_CALLSIGN;
-    i++;
-  }
-  buffer[writeIndex++]=
-    (address.hasBeenRepeated?0x80:0)
-    | (address.ssid<<1)
-    | (address.rr<<5)
-    | (address.extensionBit?1:0)
-  return writeIndex;
-};
-
-var writeRepeaterPath=function(buffer, writeIndex, repeaterPath) {
-  for(var i=0; i<repeaterPath.length; i++) {
-    writeIndex=writeAddress(buffer, writeIndex, repeaterPath[i]);
-  }
-  return writeIndex;
-};
-
-var writeInfo=function(buffer, writeIndex, info) {
-  for (var i=0; i < info.length; i++) {
-    buffer[writeIndex++]=info.charCodeAt(i);
-  }
-  return writeIndex;
-};
-
-var writeByte=function(buffer, writeIndex, byte) {
-  buffer[writeIndex++]=byte;
-  return writeIndex;
-};
 
 module.exports=function() {
   return new KISSFrameBuilder();

@@ -51,7 +51,7 @@ module.exports=function(frame) {
     If there are no addresses in the repeater path, the src needs extension=true.
   */
   frame.destination.extensionBit=false;
-  frame.source.extensionBit=(frame.repeaterPath.length==0)
+  frame.source.extensionBit=(frame.repeaterPath.length===0)
   if (frame.repeaterPath.length>0) {
     for (var i=0;i<frame.repeaterPath.length-1;i++) {
       frame.repeaterPath[i].extensionBit=false;
