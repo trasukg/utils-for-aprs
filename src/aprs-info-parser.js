@@ -17,9 +17,9 @@ specific language governing permissions and limitations
 under the License.
 */
 
-var exceptions=require("./exceptions.js");
+var exceptions=require("./exceptions");
 var sprintf=require("sprintf-js").sprintf;
-var InfoLexer=require("./info-lex.js");
+var InfoLexer=require("./info-lex");
 var formats=require("./aprs-formats");
 var micE=require("./mic-e-format");
 
@@ -28,24 +28,6 @@ var APRSInfoParser=function() {
 }
 
 module.exports=APRSInfoParser;
-
-APRSInfoParser.prototype.parse=function(frame) {
-  this.frame=frame;
-  // Prime the lexical analyzer for the rest of the frame.
-  this.lexer.setInput(frame.info);
-  parseInfo.call(this);
-  this.frame=undefined;
-}
-
-var parseInfo=function() {
-  this.frame.dataTypeChar=this.lexer.advanceFixed(1).charCodeAt(0);
-  var parser=dataTypeParsers[this.frame.dataTypeChar];
-  if (parser == undefined) {
-    throw new exceptions.InfoError(sprintf("%d (%s)",
-      this.frame.dataTypeChar, String.fromCharCode(this.frame.dataTypeChar)));
-  }
-  parser.call(this);
-};
 
 var parseStatus=function() {
   this.frame.dataType='status';
@@ -64,17 +46,17 @@ var parseTelemetry=function() {
   this.frame.dataType='telemetry';
   this.frame.telemetry={};
   this.lexer.advance();
-  if (this.lexer.current.token==InfoLexer.SEQ_NUMBER) {
+  if (this.lexer.current.token===InfoLexer.SEQ_NUMBER) {
     this.frame.telemetry.sequenceNumber=this.lexer.current.tval;
     this.lexer.advance();
-    if (this.lexer.current.token!=InfoLexer.COMMA) {
+    if (this.lexer.current.token!==InfoLexer.COMMA) {
       throw new exceptions.FormatError("SEQ_NUMBER should be followed by a comma");
     }
     this.lexer.advance();
     parseTelemetryValues.call(this);
-  } else if (this.lexer.current.token==InfoLexer.MIC) {
+  } else if (this.lexer.current.token===InfoLexer.MIC) {
     this.lexer.advance();
-    if (this.lexer.current.token==InfoLexer.COMMA) {
+    if (this.lexer.current.token===InfoLexer.COMMA) {
       this.lexer.advance();
     }
     parseTelemetryValues.call(this);
@@ -90,18 +72,18 @@ var parseTelemetry=function() {
 var parseTelemetryValues=function() {
   this.frame.telemetry.values=[];
   for (var i=0; i<5; i++) {
-    if (this.lexer.current.token != InfoLexer.INT) {
+    if (this.lexer.current.token !== InfoLexer.INT) {
       //console.log("token value", token);
       throw new exceptions.FormatError("Telemetry value " + i + " should be integer");
     }
     this.frame.telemetry.values.push(this.lexer.current.tval);
     this.lexer.advance();
-    if (this.lexer.current.token!=InfoLexer.COMMA) {
+    if (this.lexer.current.token!==InfoLexer.COMMA) {
       throw new exceptions.FormatError("Telemetry values should end in ','");
     }
     this.lexer.advance();
   }
-  if (this.lexer.current.token != InfoLexer.BINARY_OCTET) {
+  if (this.lexer.current.token !== InfoLexer.BINARY_OCTET) {
     throw new exceptions.FormatError("Telemetry needs 8 binary bits at the end");
   }
   this.frame.telemetry.flags=this.lexer.current.tval;
@@ -184,7 +166,7 @@ var parseCurrentMicEData=function() {
 var parseMessage=function() {
   this.frame.dataType='message';
   formats.parseAddressee.call(this);
-  if (this.lexer.current.token != InfoLexer.COLON) {
+  if (this.lexer.current.token !== InfoLexer.COLON) {
     //console.log('lexer.theRest=' + this.lexer.theRest());
     throw new exceptions.FormatError("Message format is incorrect - should be ':' after addressee");
   }
@@ -200,7 +182,7 @@ var parseObject=function() {
   formats.parseObjectName.call(this);
   if (this.lexer.current.token === InfoLexer.STAR) {
     this.frame.killed=false;
-  } else if (this.lexer.current.token != InfoLexer.UNDERSCORE) {
+  } else if (this.lexer.current.token !== InfoLexer.UNDERSCORE) {
     //console.log('lexer.theRest=' + this.lexer.theRest());
     throw new exceptions.FormatError("Object format is incorrect - should be " +
       "* or _ after name");
@@ -238,7 +220,7 @@ var parseThirdPartyTraffic=function() {
 
 var parseThirdPartyHeader=function() {
   this.frame.source=formats.parseTNC2Callsign.call(this);
-  if (this.lexer.current.token != InfoLexer.GREATER_THAN) {
+  if (this.lexer.current.token !== InfoLexer.GREATER_THAN) {
     throw new exceptions.FormatError("Third-party header format is incorrect: " +
       "should include '>'");
   }
@@ -251,14 +233,14 @@ var parseThirdPartyHeader=function() {
     longer continues (i.e. the next token isn't a comma).
   */
   parseRepeaterPathList.call(this);
-  if (this.lexer.current.token != InfoLexer.COLON) {
+  if (this.lexer.current.token !== InfoLexer.COLON) {
     throw new exceptions.FormatError("Expected ':' after third-party header");
   }
 
 };
 
 var parseRepeaterPathList=function() {
-  if(this.lexer.current.token==InfoLexer.COMMA) {
+  if(this.lexer.current.token===InfoLexer.COMMA) {
     this.lexer.advance();
     this.frame.repeaterPath.push(formats.parseTNC2Callsign.call(this));
     parseRepeaterPathList.call(this);
@@ -283,3 +265,23 @@ var dataTypeParsers={
   60 : parseStationCapability,
   125 : parseThirdPartyTraffic
 };
+
+var parseInfo=function() {
+  this.frame.dataTypeChar=this.lexer.advanceFixed(1).charCodeAt(0);
+  var parser=dataTypeParsers[this.frame.dataTypeChar];
+  if (parser === undefined) {
+    throw new exceptions.InfoError(sprintf("%d (%s)",
+      this.frame.dataTypeChar, String.fromCharCode(this.frame.dataTypeChar)));
+  }
+  parser.call(this);
+};
+
+APRSInfoParser.prototype.parse=function(frame) {
+  this.frame=frame;
+  // Prime the lexical analyzer for the rest of the frame.
+  this.lexer.setInput(frame.info);
+  parseInfo.call(this);
+  this.frame=undefined;
+}
+
+

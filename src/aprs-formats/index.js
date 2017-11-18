@@ -27,12 +27,17 @@ var InfoLexer=require("../info-lex.js");
 var parseTimestamp=function() {
   this.lexer.advanceFixed(7);
   var result;
+  var day;
+  var hrs;
+  var mins;
+  var secs;
+  var timestamp;
   if (result= /(\d{2})(\d{2})(\d{2})h/.exec(this.lexer.tval)) {
     // HHMMSS zulu time
-    var hrs=result[1];
-    var mins=result[2];
-    var secs=result[3];
-    var timestamp=new Date();
+    hrs=result[1];
+    mins=result[2];
+    secs=result[3];
+    timestamp=new Date();
     timestamp.setUTCHours(parseInt(hrs));
     timestamp.setUTCMinutes(parseInt(mins));
     timestamp.setUTCSeconds(parseInt(secs));
@@ -40,32 +45,32 @@ var parseTimestamp=function() {
     this.frame.position.timestamp=timestamp;
     //console.log("Got timestamp " + timestamp);
   }  else if (result= /(\d{2})(\d{2})(\d{2})z/.exec(this.lexer.tval)) {
-      // ddHHMM zulu time
-      var day=result[1];
-      var hrs=result[2];
-      var mins=result[3];
-      var timestamp=new Date();
-      timestamp.setUTCHours(parseInt(hrs));
-      timestamp.setUTCMinutes(parseInt(mins));
-      timestamp.setDate(parseInt(day));
-      timestamp.setUTCSeconds(0);
-      timestamp.setUTCMilliseconds(0);
-      this.frame.position.timestamp=timestamp;
-      //console.log("Got timestamp " + timestamp);
-    } else if (result= /(\d{2})(\d{2})(\d{2})\//.exec(this.lexer.tval)) {
-        // ddHHMM local time
-        var day=result[1];
-        var hrs=result[2];
-        var mins=result[3];
-        var timestamp=new Date();
-        timestamp.setHours(parseInt(hrs));
-        timestamp.setMinutes(parseInt(mins));
-        timestamp.setDate(parseInt(day));
-        timestamp.setSeconds(0);
-        timestamp.setMilliseconds(0);
-        this.frame.position.timestamp=timestamp;
-        //console.log("Got timestamp " + timestamp);
-    }
+    // ddHHMM zulu time
+    day=result[1];
+    hrs=result[2];
+    mins=result[3];
+    timestamp=new Date();
+    timestamp.setUTCHours(parseInt(hrs));
+    timestamp.setUTCMinutes(parseInt(mins));
+    timestamp.setDate(parseInt(day));
+    timestamp.setUTCSeconds(0);
+    timestamp.setUTCMilliseconds(0);
+    this.frame.position.timestamp=timestamp;
+    //console.log("Got timestamp " + timestamp);
+  } else if (result= /(\d{2})(\d{2})(\d{2})\//.exec(this.lexer.tval)) {
+    // ddHHMM local time
+    day=result[1];
+    hrs=result[2];
+    mins=result[3];
+    timestamp=new Date();
+    timestamp.setHours(parseInt(hrs));
+    timestamp.setMinutes(parseInt(mins));
+    timestamp.setDate(parseInt(day));
+    timestamp.setSeconds(0);
+    timestamp.setMilliseconds(0);
+    this.frame.position.timestamp=timestamp;
+    //console.log("Got timestamp " + timestamp);
+  }
 }
 exports.parseTimestamp=parseTimestamp;
 
@@ -74,16 +79,6 @@ exports.parseOptionalTimestamp=function() {
   if (/\d{6}[zh\/]/.test(peek)) {
     parseTimestamp.call(this);
   }
-}
-
-/*
-  APRS101-24.  Coords are latitude symbol table id, longitude, symbol id.
-*/
-exports.parsePositionCoordinates=function() {
-  parseLatitude.call(this);
-  parseSymbolTableId.call(this);
-  parseLongitude.call(this);
-  parseSymbolId.call(this);
 }
 
 var digitValues={
@@ -105,7 +100,7 @@ var parseLatitude=function() {
   var field=this.lexer.advanceFixed(8);
   //console.log("Input for latitude is '%s'", field);
   var result=/^(\d{2})([\d\ ]{2}).([\d ]{2})([NS])$/.exec(field);
-  if (result == undefined) {
+  if (result === undefined) {
     throw new exceptions.FormatError("Bad format for latitude: '" + field +"'");
   }
   var degrees=parseFloat(result[1]);
@@ -115,15 +110,16 @@ var parseLatitude=function() {
       digitValues[result[3].charAt(0)]/10 +
       digitValues[result[3].charAt(1)]/100;
   degrees += minutes/60;
-  degrees = (result[4]=='N')?degrees:-degrees;
+  degrees = (result[4]==='N')?degrees:-degrees;
+  var minutesAccuracy;
   // Calculate the accuracy.
-  if (result[2].charAt(0)==' ') {
+  if (result[2].charAt(0)===' ') {
     minutesAccuracy=60;
-  } else if (result[2].charAt(1)==' ') {
+  } else if (result[2].charAt(1)===' ') {
     minutesAccuracy=10;
-  } else if (result[3].charAt(0)==' ') {
+  } else if (result[3].charAt(0)===' ') {
     minutesAccuracy=1;
-  } else if (result[3].charAt(1)==' ') {
+  } else if (result[3].charAt(1)===' ') {
     minutesAccuracy=0.1;
   } else {
     minutesAccuracy=0.01;
@@ -152,7 +148,7 @@ var parseLongitude=function() {
   var field=this.lexer.advanceFixed(9);
   //console.log("Input for longitude is '%s'", field);
   var result=/^(\d{3})([\d\ ]{2}).([\d ]{2})([EW])$/.exec(field);
-  if (result == undefined) {
+  if (result === undefined) {
     throw new exceptions.FormatError("Bad format for longitude");
   }
   var degrees=parseFloat(result[1]);
@@ -162,7 +158,7 @@ var parseLongitude=function() {
       digitValues[result[3].charAt(0)]/10 +
       digitValues[result[3].charAt(1)]/100;
   degrees += minutes/60;
-  degrees = (result[4]=='E')?degrees:-degrees;
+  degrees = (result[4]==='E')?degrees:-degrees;
 
   this.frame.position.coords.longitude=degrees;
 }
@@ -186,6 +182,16 @@ var phgValues=[
   {power: 64, height: 2560, gain: 8, directivity: 360 },
   {power: 81, height: 5120, gain: 9, directivity: undefined },
 ];
+
+/*
+  APRS101-24.  Coords are latitude symbol table id, longitude, symbol id.
+*/
+exports.parsePositionCoordinates=function() {
+  parseLatitude.call(this);
+  parseSymbolTableId.call(this);
+  parseLongitude.call(this);
+  parseSymbolId.call(this);
+}
 
 var parseDataExtension=function() {
   var extension=this.lexer.peek(7);
@@ -234,7 +240,7 @@ var parseWeatherData=function(comment) {
 var parseCommentThatMayHaveAltitudeOrWeather=function() {
   var comment=this.lexer.theRest();
   //console.log("comment is '%s'", comment);
-  if (this.frame.position.symbolId=="_") {
+  if (this.frame.position.symbolId==="_") {
     parseWeatherData.call(this,comment);
   } else {
     // See if altitude is the first thing.
@@ -274,7 +280,7 @@ var parseMessageText=function() {
   }
   this.frame.message=result[1];
   this.frame.messageId=result[3];
-  this.frame.senderIsReplyAckCapable=(result[5]=='}');
+  this.frame.senderIsReplyAckCapable=(result[5]==='}');
   this.frame.replyAck=result[6];
 }
 exports.parseMessageText=parseMessageText;
@@ -287,23 +293,21 @@ exports.parseObjectName=parseObjectName;
 
 exports.parseTNC2Callsign=function() {
   var ret={ ssid: 0, hasBeenRepeated: false };
-  if(this.lexer.current.token != InfoLexer.CSTEXT) {
+  if(this.lexer.current.token !== InfoLexer.CSTEXT) {
     throw new exceptions.FormatError("Bad format for callsign - expected CSTEXT, got " + this.lexer.current.token + ", theRest='" + this.lexer.theRest() + "'");
   }
   ret.callsign=this.lexer.current.tval;
   this.lexer.advance();
-  if(this.lexer.current.token == InfoLexer.DASH) {
+  if(this.lexer.current.token === InfoLexer.DASH) {
     this.lexer.advance();
-    if (this.lexer.current.token == InfoLexer.INT) {
-      ret.ssid=this.lexer.current.tval;
-    } else if (this.lexer.current.token==InfoLexer.CSTEXT) {
+    if (this.lexer.current.token === InfoLexer.INT || this.lexer.current.token === InfoLexer.CSTEXT) {
       ret.ssid=this.lexer.current.tval;
     } else {
       throw new exceptions.FormatError("Bad format for SSID - expected int or CSTEXT");
     }
     this.lexer.advance();
   }
-  if (this.lexer.current.token==InfoLexer.STAR) {
+  if (this.lexer.current.token===InfoLexer.STAR) {
     ret.hasBeenRepeated=true;
     this.lexer.advance();
   }

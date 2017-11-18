@@ -71,7 +71,7 @@ describe("The AX.25 KISS Frame Parser", function() {
     parser.setInput(sampleBuf);
 
     expect(function() {
-      var address=parser.parseAddress();
+      parser.parseAddress();
     }).toThrowError(exceptions.FrameError);
   });
 

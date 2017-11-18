@@ -18,14 +18,14 @@ under the License.
 */
 
 var util=require('util');
-var StateMachine=require('./StateMachine.js');
+var StateMachine=require('@trasukg/state-machine');
 var EventEmitter=require('events');
-var framing=require('./kiss-framing.js');
-var KISSConnection=require('./KISSConnection.js');
+var framing=require('./kiss-framing');
+var KISSConnection=require('./KISSConnection');
 
 // 'connection-machine-states' contains a state machine description that has the
 // persistent connection behaviour that we want.
-var states= require('./connection-machine-states.js');
+var states= require('./connection-machine-states');
 
 /**
   This is an "Endpoint" that attempts to make a connection to a TCP KISS

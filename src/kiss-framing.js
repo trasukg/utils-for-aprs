@@ -58,7 +58,7 @@ var unescapeStateMachine=function(bufferLength) {
   var process;
 
   var ignore=function(emitter,c) {
-    if (c==FEND) {
+    if (c===FEND) {
       process=plain;
     }
   }
