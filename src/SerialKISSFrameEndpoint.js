@@ -18,7 +18,7 @@ under the License.
 */
 
 var util=require('util');
-var SerialPort=require('serialport');
+var SerialPort=null; //require('serialport');
 var KISSConnection=require('./KISSConnection.js');
 var KISSFrameEndpoint=require('./KISSFrameEndpoint');
 
@@ -43,6 +43,11 @@ byte-stuffing as required.  When a KISS frame is received, the endpoint emits a
 @constructor
 */
 var SerialKISSFrameEndpoint=function(device, options) {
+  // Lazy-load the serialport library, only if we try to create a serial 
+  // connection.
+  if (SerialPort === null) {
+    SerialPort=require("serialport");
+  }
   KISSFrameEndpoint.apply(this);
   this.device=device;
   this.options=options;

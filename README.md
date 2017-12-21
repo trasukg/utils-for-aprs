@@ -110,4 +110,4 @@ KISS frames for transmittal.
 2.2.4 - Fixed a problem with ServerSocketKISSFrameEndpoint.  
 2.2.5 - Fixed formatting problem in package.JSON  
 2.2.6 - Refactored etc to remove bugs flagged by SonarQube.
-
+2.2.7 - Made 'serialport' library optional, and lazy-loaded.
