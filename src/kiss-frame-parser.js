@@ -75,7 +75,7 @@ frame check code.
 */
 KISSFrameParser.prototype.advance=function() {
   /* Don't advance if we're already past the end. */
-  if (this.nextByte != undefined) {
+  if (this.nextByte !== undefined) {
     this.currentIndex++;
     this.nextByte=this.inputBuffer[this.currentIndex];
   }
@@ -85,29 +85,29 @@ KISSFrameParser.prototype.parseAddress=function() {
   var address={};
   var callsign="";
   for(var i=0; i <6; i++) {
-    if (this.nextByte == undefined) {
+    if (this.nextByte === undefined) {
       throw new exceptions.FrameError("Incomplete address at " +    this.currentIndex);
     }
     callsign=callsign+String.fromCharCode((this.nextByte)>>1);
     this.advance();
   }
-  if (this.nextByte == undefined) {
+  if (this.nextByte === undefined) {
     throw new exceptions.FrameError("Incomplete address at " + this.currentIndex);
   }
   address.callsign=callsign.trim();
   address.ssid=this.nextByte>>1 & 0x0f;
-  address.hasBeenRepeated=((this.nextByte & 0x80) != 0);
+  address.hasBeenRepeated=((this.nextByte & 0x80) !== 0);
   address.rr=this.nextByte>>5 & 0x03;
-  address.extensionBit=((this.nextByte & 0x01) != 0);
+  address.extensionBit=((this.nextByte & 0x01) !== 0);
   this.advance();
   return address;
 }
 
 KISSFrameParser.prototype.parseKISSDataFrameCommand=function() {
-  if (this.nextByte == undefined) {
+  if (this.nextByte === undefined) {
     throw new exceptions.FrameError("Empty Frame");
   }
-  if (this.nextByte!=0) {
+  if (this.nextByte!==0) {
     throw new
       exceptions.FrameError("Expected data frame command(0), but got " +
       "0x" + this.nextByte.toString(16));
@@ -116,10 +116,10 @@ KISSFrameParser.prototype.parseKISSDataFrameCommand=function() {
 }
 
 KISSFrameParser.prototype.parseUIFrameControlField=function() {
-  if (this.nextByte == undefined) {
+  if (this.nextByte === undefined) {
     throw new exceptions.FrameError("Frame ended before control field");
   }
-  if ((this.nextByte & 0xef) != 0x03) {
+  if ((this.nextByte & 0xef) !== 0x03) {
     throw new
       exceptions.FrameError("Expected UI frame control, but got " +
       "0x" + this.nextByte.toString(16));
@@ -143,7 +143,7 @@ KISSFrameParser.prototype.parseFrame=function(inputBuffer) {
     this.setInput(inputBuffer);
   }
   var frame={};
-  if (this.nextByte==undefined) {
+  if (this.nextByte===undefined) {
     return undefined;
   }
   this.parseKISSDataFrameCommand();

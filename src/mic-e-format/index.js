@@ -48,7 +48,7 @@ var parseDestinationAddressInfo=function() {
   latStr=latStr.concat((addressEncoding[destAddress.charAt(3)].north)?"N":"S");
   //console.log("Mic-E Latitude reads %s", latStr);
   var result=/^(\d{2})([\d\ ]{2})([\d ]{2})([NS])$/.exec(latStr);
-  if (result == undefined) {
+  if (result === undefined) {
     throw new exceptions.FormatError("Bad format for latitude");
   }
   var degrees=parseFloat(result[1]);
@@ -59,15 +59,16 @@ var parseDestinationAddressInfo=function() {
     digitValues[result[3].charAt(0)]/10 +
     digitValues[result[3].charAt(1)]/100;
   degrees += minutes/60;
-  degrees = (result[4]=='N')?degrees:-degrees;
+  degrees = (result[4]==='N')?degrees:-degrees;
   // Calculate the accuracy.
-  if (result[2].charAt(0)==' ') {
+  var minutesAccuracy;
+  if (result[2].charAt(0)===' ') {
     minutesAccuracy=60;
-  } else if (result[2].charAt(1)==' ') {
+  } else if (result[2].charAt(1)===' ') {
     minutesAccuracy=10;
-  } else if (result[3].charAt(0)==' ') {
+  } else if (result[3].charAt(0)===' ') {
     minutesAccuracy=1;
-  } else if (result[3].charAt(1)==' ') {
+  } else if (result[3].charAt(1)===' ') {
     minutesAccuracy=0.1;
   } else {
     minutesAccuracy=0.01;

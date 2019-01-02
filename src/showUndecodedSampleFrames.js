@@ -29,7 +29,7 @@ var parsedAprs=0;
 var undecodedErrors={};
 
 sampleFrames.forEach(function(item, index) {
-  if (item.length==0) { return; }
+  if (item.length===0) { return; }
   parser.setInput(new Buffer(item));
   var frame=parser.parseFrame();
   try {
@@ -37,7 +37,7 @@ sampleFrames.forEach(function(item, index) {
     //console.log("Frame is " + JSON.stringify(frame, null, 2));
     parsedAprs++;
   } catch(err) {
-    if (undecodedErrors[err]==undefined) {
+    if (undecodedErrors[err]===undefined) {
       undecodedErrors[err]=0;
     }
     undecodedErrors[err]=undecodedErrors[err]+1;

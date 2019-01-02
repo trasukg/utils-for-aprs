@@ -17,10 +17,8 @@ specific language governing permissions and limitations
 under the License.
 */
 
-
-
 var util=require('util');
-var SerialPort=require('serialport');
+var SerialPort=null; //require('serialport');
 var KISSConnection=require('./KISSConnection.js');
 var KISSFrameEndpoint=require('./KISSFrameEndpoint');
 
@@ -45,6 +43,11 @@ byte-stuffing as required.  When a KISS frame is received, the endpoint emits a
 @constructor
 */
 var SerialKISSFrameEndpoint=function(device, options) {
+  // Lazy-load the serialport library, only if we try to create a serial 
+  // connection.
+  if (SerialPort === null) {
+    SerialPort=require("serialport");
+  }
   KISSFrameEndpoint.apply(this);
   this.device=device;
   this.options=options;
@@ -61,24 +64,19 @@ util.inherits(SerialKISSFrameEndpoint, KISSFrameEndpoint);
 SerialKISSFrameEndpoint.prototype.openConnection=function() {
   // The closures will be called in the context of the socket, so store the current
   // value of 'this' for use in the closures.
-  console.log("Attempting to open the serial port");
   var self=this;
+  self.emit('connecting', self.device, self.options);
   self.port=new SerialPort(self.device, self.options, function(err) {
     if(!err) {
-      console.log("connection succeeded");
       self.connectionSucceeded();
     } else {
-      console.log("connection failed");
       self.connectionFailed(err);
     }
   });
   self.port.on('error', function(err) {
-    //console.log("this=" + JSON.stringify(self));
-    console.log("Got error:" + err);
     self.error(err);
   });
   self.port.on('close', function() {
-    console.log('Got port closed event.');
     self.error();
   })
   self.port.on('data', function(data) {
@@ -118,6 +116,7 @@ module.exports=SerialKISSFrameEndpoint;
 var SerialKISSConnection=function(port, endpoint) {
   KISSConnection.apply(this);
   this.port=port;
+  this.endpoint=endpoint;
 }
 
 util.inherits(SerialKISSConnection, KISSConnection);
@@ -126,6 +125,6 @@ SerialKISSConnection.prototype.write=function(buffer) {
   this.port.write(buffer);
 };
 
-SerialKISSConnection.prototype.flush=function(buffer) {
+SerialKISSConnection.prototype.flush=function() {
   // No-op
 }

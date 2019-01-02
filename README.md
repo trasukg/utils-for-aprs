@@ -107,3 +107,12 @@ KISS frames for transmittal.
 2.2.1 - Added support for Browserify and Web Socket endpoints.  
 2.2.2 - Added required dependency on 'ws'.  
 2.2.3 - Added required dependency on 'bluebird'.  
+2.2.4 - Fixed a problem with ServerSocketKISSFrameEndpoint.  
+2.2.5 - Fixed formatting problem in package.JSON  
+2.2.6 - Refactored etc to remove bugs flagged by SonarQube.  
+2.2.7 - Made 'serialport' library optional, and lazy-loaded.  
+2.2.8 - Updated many dependencies to remove security vulnerabilities exposed
+by 'npm audit'.  They're not all gone, because one of the updates required is
+to serialport, but serialport's move from 4.x to 5.x (7.x is current)
+had breaking changes to the
+interface that will take some time to adopt.  

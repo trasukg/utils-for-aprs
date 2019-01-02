@@ -20,7 +20,7 @@ under the License.
 var sprintf=require("sprintf-js").sprintf;
 
 var addressToString=function(address) {
-  if (address == undefined) {
+  if (address === undefined) {
     return "??";
   }
   return (address.ssid===0 || address.ssid ==='')?
@@ -29,7 +29,7 @@ var addressToString=function(address) {
 exports.addressToString=addressToString;
 
 exports.repeaterPathToString=function(repeaterPath) {
-  if (!repeaterPath) {
+  if (repeaterPath===undefined || repeaterPath.length===0) {
     return "<dir>";
   }
   var path="";

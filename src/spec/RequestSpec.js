@@ -23,8 +23,6 @@ describe("A Request object", function() {
   var UUT;
   var sender=jasmine.createSpy();
   var completer=jasmine.createSpy();
-  var timeout=jasmine.createSpy();
-  var responseFunction=jasmine.createSpy();
 
   beforeEach(function() {
     jasmine.clock().install();
@@ -48,14 +46,12 @@ describe("A Request object", function() {
 
   it('resolves the promise on reply()', function(done) {
     UUT=new Request(testData);
-    var receivedData;
     var responseFunction=function(data) {
       console.log("got data " + JSON.stringify(data));
-      receivedData=data;
       done();
     };
 
-    var promise=UUT.send(sender,completer).then(responseFunction).catch(function(err) {
+    UUT.send(sender,completer).then(responseFunction).catch(function(err) {
       console.log("Caught error " + err);
     });
     expect(sender).toHaveBeenCalledWith(testData);
@@ -66,13 +62,11 @@ describe("A Request object", function() {
 
   it("times out if there's no reply in time", function(done) {
     UUT=new Request(testData);
-    var caught;
     var catchFunction=function(err) {
       console.log("got err " + JSON.stringify(err));
-      caught=err;
       done();
     }
-    var promise=UUT.send(sender,completer).catch(catchFunction);
+    UUT.send(sender,completer).catch(catchFunction);
     expect(sender).toHaveBeenCalledWith(testData);
     jasmine.clock().tick(15000);
     expect(completer).toHaveBeenCalled();

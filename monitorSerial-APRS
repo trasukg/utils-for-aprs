@@ -42,7 +42,7 @@ if (process.argv.length != 3) {
 
 //Create the endpoint
 var endpoint=new SerialKISSFrameEndpoint(process.argv[2], {
-  baudrate: 1200
+  baudRate: 1200
 });
 
 var aprsProcessor=new APRSProcessor();
