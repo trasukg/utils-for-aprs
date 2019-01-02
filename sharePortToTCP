@@ -29,8 +29,8 @@ under the License.
 var path=require('path');
 var util=require('util');
 var ServerSocketKISSFrameEndpoint=
-  require('utils-for-aprs').ServerSocketKISSFrameEndpoint;
-var SerialKISSFrameEndpoint=require('utils-for-aprs').SerialKISSFrameEndpoint;
+  require('./src').ServerSocketKISSFrameEndpoint;
+var SerialKISSFrameEndpoint=require('./src').SerialKISSFrameEndpoint;
 
 if (process.argv.length != 4) {
   console.log("Usage: node %s <device> <port>", path.basename(process.argv[1]));
@@ -47,7 +47,7 @@ var port=process.argv[3];
 
 //Create the server socket endpoint
 var serverEndpoint=new ServerSocketKISSFrameEndpoint("0.0.0.0", port);
-var serialEndpoint=new SerialKISSFrameEndpoint(device, {baudrate: 1200});
+var serialEndpoint=new SerialKISSFrameEndpoint(device, {baudRate: 1200});
 
 /* All connections are put into a Set, which lets us use forEach()
 */
@@ -67,9 +67,10 @@ serverEndpoint.on('connect', function(connection) {
       connection.socket.remoteAddress + ":" + connection.socket.remotePort +
       " was closed");
   });
+  console.log("Returning from connect()...");
 });
 
-serverEndpoint.on('listen', function() {
+serverEndpoint.on('listening', function() {
   console.log("KISS TCP server established - listening for connections on port " + [port]);
 });
 
@@ -94,7 +95,8 @@ serialEndpoint.on('connect', function(connection) {
 });
 
 var relayToAllBut=function(source, frame) {
-  //console.log("Got frame from " + source);
+  console.log("Got frame from " + source);
+
   allConnections.forEach(function(connection){
     if (connection === source) {
       //console.log("Skipping destination " + connection);
@@ -102,6 +104,7 @@ var relayToAllBut=function(source, frame) {
       connection.data(frame);
     }
   });
+
 }
 
 /* Turn on the endpoints.
@@ -109,5 +112,5 @@ var relayToAllBut=function(source, frame) {
   - ServerSocketKISSFrameEndpoint will open the server port and start
   accepting connections
 */
-serialEndpoint.enable();
 serverEndpoint.enable();
+serialEndpoint.enable();

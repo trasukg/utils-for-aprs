@@ -31,6 +31,6 @@
     "gulp": "^4.0.0",
     "gulp-jasmine": "^2.4.2",
     "gulp-jsdoc3": "^2.0.0",
-    "serialport": "^7.1.1"
+    "serialport": "^4.0.7"
   }
 }
