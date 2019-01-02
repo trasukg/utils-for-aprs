@@ -25,6 +25,11 @@ describe("An AprsDataEndpoint object", function() {
 
   beforeEach(function() {
     UUT=new AprsDataEndpoint();
+    /* This looks odd, but is here to alleviate a problem when running 'gulp test'
+    where something else is installing a jasmine clock.
+    https://stackoverflow.com/questions/39600819/conflict-between-zone-js-and-jasmines-clock
+    */
+    jasmine.clock().uninstall();
     jasmine.clock().install();
   });
 
@@ -101,6 +106,11 @@ describe("An AprsDataEndpoint object", function() {
 
     beforeEach(function() {
       UUT=new AprsDataEndpoint();
+      /* This looks odd, but is here to alleviate a problem when running 'gulp test'
+      where something else is installing a jasmine clock.
+      https://stackoverflow.com/questions/39600819/conflict-between-zone-js-and-jasmines-clock
+      */
+      jasmine.clock().uninstall();
       jasmine.clock().install();
       UUT.enable();
       UUT.connectionSucceeded();
