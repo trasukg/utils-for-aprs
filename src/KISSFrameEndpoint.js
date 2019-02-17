@@ -126,6 +126,14 @@ KISSFrameEndpoint.prototype.closeConnectionAndEmitDisconnect=function() {
 }
 
 /**
+  (Implemented by subclasses)
+  Close the connection with no 'disconnect' event.
+  @abstract
+*/
+KISSFrameEndpoint.prototype.closeConnection=function() {
+}
+
+/**
   Called by the state machine states to trigger a timer that will call
   the timeout() method after a fixed time span (5000ms).
 */
