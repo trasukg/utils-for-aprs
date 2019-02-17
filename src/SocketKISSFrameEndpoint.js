@@ -116,6 +116,16 @@ util.inherits(SocketKISSConnection, KISSConnection);
 
 SocketKISSConnection.prototype.write=function(buffer) {
   this.socket.write(buffer);
+  //console.log("Data instanceof Buffer=" + (data instanceof Buffer));
+  // var output="[";
+  // for(var i=0; i < buffer.length; i++) {
+  //   if (i != 0) {
+  //     output=output+", ";
+  //   }
+  //   output=output+ "0x" + buffer[i].toString(16);
+  // }
+  // output=output+"],";
+  // console.log("Wrote " + output);
 }
 
 SocketKISSConnection.prototype.flush=function() {
