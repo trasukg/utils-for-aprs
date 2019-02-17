@@ -21,7 +21,8 @@ module.exports = {
   Idle: {
     enable: 'Connecting',
     error: 'Idle',
-    timeout: 'Idle'
+    timeout: 'Idle',
+    disable: 'Idle'
   },
   Connecting: {
     connectionSucceeded: 'Connected',

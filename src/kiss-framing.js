@@ -155,6 +155,8 @@ var Escaper=function(bufferLength) {
 
   this.escape=function(buffer) {
     contentLength=0;
+    // Frame is preceded and followed by FEND, as per KISS spec.
+    output(FEND);
     for (var i=0; i<buffer.length; i++) {
       process(buffer[i]);
     }

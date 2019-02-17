@@ -118,14 +118,28 @@ ServerSocketKISSFrameEndpoint.prototype.emitListening=function() {
 }
 
 ServerSocketKISSFrameEndpoint.prototype.closeSocketAndEmitDisconnect=function() {
-  console.log("Closing server socket");
-  this.serverSocket.close();
-  this.serverSocket.getConnections().forEach(function(socket) {
-    socket.end();
-  });
+  this.closeSocket();
   this.emit('disconnect');
 }
 
+ServerSocketKISSFrameEndpoint.prototype.closeSocket=function() {
+  console.log("Closing server socket");
+  this.serverSocket.close();
+  /*
+  It seems this was never actually called, because the usage of getConnections()
+  is wrong; it actually returns an integer count of connections, not a list of
+  active connections.
+
+  If it turns out to be actually needed, we'll have to implement it ourselves
+  by tracking the connect and socket.close events.
+
+  For now just comment it out.
+  
+  this.serverSocket.getConnections().forEach(function(socket) {
+    socket.end();
+  });
+  */
+}
 /**
   Called by the state machine states to trigger a timer that will call
   the timeout() method after a fixed time span (5000ms).
