@@ -116,3 +116,5 @@ by 'npm audit'.  They're not all gone, because one of the updates required is
 to serialport, but serialport's move from 4.x to 5.x (7.x is current)
 had breaking changes to the
 interface that will take some time to adopt.  
+2.2.9 - Fixed a framing error that caused some transmitted frames to not
+be recognized by the receiving device.  
