@@ -27,7 +27,7 @@ var aprsParser=new APRSInfoParser();
 
 describe("The APRS info parser", function() {
   it("takes the 0'th sample and parses it", function() {
-    var input=new Buffer(sampleFrames[0]);
+    var input=Buffer.from(sampleFrames[0]);
     var parser=new KISSFrameParser();
     parser.setInput(input);
     var frame=parser.parseFrame();
@@ -37,14 +37,14 @@ describe("The APRS info parser", function() {
     expect(frame.statusText).toBe('Burlington Amateur Radio Club');
   });
   it("takes the 1'th sample and parses it", function() {
-    var input=new Buffer(sampleFrames[1]);
+    var input=Buffer.from(sampleFrames[1]);
     var parser=new KISSFrameParser();
     parser.setInput(input);
     var frame=parser.parseFrame();
     expect(frame).toBeUndefined();
   });
   it("takes the 2nd sample and parses it", function() {
-    var input=new Buffer(sampleFrames[2]);
+    var input=Buffer.from(sampleFrames[2]);
     var parser=new KISSFrameParser();
     parser.setInput(input);
     var frame=parser.parseFrame();
@@ -56,7 +56,7 @@ describe("The APRS info parser", function() {
     expect(frame.telemetry.flags).toBe(parseInt("00001011",2));
   });
   it("takes the 3rd sample (Position with timestamp) and parses it", function() {
-    var input=new Buffer(sampleFrames[3]);
+    var input=Buffer.from(sampleFrames[3]);
     var parser=new KISSFrameParser();
     parser.setInput(input);
     var frame=parser.parseFrame();
@@ -79,7 +79,7 @@ describe("The APRS info parser", function() {
   });
   it("takes the 7th sample (Position/Weather Report without timestamp) and parses it",
   function() {
-    var input=new Buffer(sampleFrames[7]);
+    var input=Buffer.from(sampleFrames[7]);
     var parser=new KISSFrameParser();
     parser.setInput(input);
     var frame=parser.parseFrame();
@@ -110,7 +110,7 @@ describe("The APRS info parser", function() {
   });
   it("takes the 11th sample (Position w/o timestamp, no messaging) and parses it",
   function() {
-    var input=new Buffer(sampleFrames[11]);
+    var input=Buffer.from(sampleFrames[11]);
     var parser=new KISSFrameParser();
     parser.setInput(input);
     var frame=parser.parseFrame();
@@ -132,7 +132,7 @@ describe("The APRS info parser", function() {
   });
   it("takes the 5th sample (MIC-E Data) and parses it",
   function() {
-    var input=new Buffer(sampleFrames[5]);
+    var input=Buffer.from(sampleFrames[5]);
     var parser=new KISSFrameParser();
     parser.setInput(input);
     var frame=parser.parseFrame();
@@ -156,7 +156,7 @@ describe("The APRS info parser", function() {
   });
   it("takes the 550th sample (Message) and parses it",
   function() {
-    var input=new Buffer(sampleFrames[550]);
+    var input=Buffer.from(sampleFrames[550]);
     var parser=new KISSFrameParser();
     parser.setInput(input);
     var frame=parser.parseFrame();
@@ -177,7 +177,7 @@ describe("The APRS info parser", function() {
   });
   it("takes sample 191 (third-party Message) and parses it",
   function() {
-    var input=new Buffer(sampleFrames[191]);
+    var input=Buffer.from(sampleFrames[191]);
     var parser=new KISSFrameParser();
     parser.setInput(input);
     var frame=parser.parseFrame();
@@ -219,7 +219,7 @@ describe("The APRS info parser", function() {
   });
   it("takes the 145th sample (Object) and parses it",
   function() {
-    var input=new Buffer(sampleFrames[145]);
+    var input=Buffer.from(sampleFrames[145]);
     var parser=new KISSFrameParser();
     parser.setInput(input);
     var frame=parser.parseFrame();
@@ -245,7 +245,7 @@ describe("The APRS info parser", function() {
   });
   it("takes the 339th sample (Station Capabilities) and parses it",
   function() {
-    var input=new Buffer(sampleFrames[339]);
+    var input=Buffer.from(sampleFrames[339]);
     var parser=new KISSFrameParser();
     parser.setInput(input);
     var frame=parser.parseFrame();

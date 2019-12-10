@@ -29,7 +29,7 @@ var parsedAprs=0;
 
 sampleFrames.forEach(function(item,index) {
   if (item.length===0) { return; }
-  parser.setInput(new Buffer(item));
+  parser.setInput(Buffer.from(item));
   var frame=parser.parseFrame();
   console.log("[%d] %s -> %s via %s : %s",
     index,
