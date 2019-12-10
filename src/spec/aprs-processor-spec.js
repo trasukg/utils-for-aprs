@@ -25,7 +25,7 @@ var Uut=new APRSProcessor();
 
 describe("The APRS processor", function() {
   it("takes gets called with frame data and emits events.", function() {
-    var input=new Buffer(sampleFrames[0]);
+    var input=Buffer.from(sampleFrames[0]);
     var wasCalled=false;
     var receivedPacket=null;
 

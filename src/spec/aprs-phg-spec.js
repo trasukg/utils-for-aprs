@@ -29,7 +29,7 @@ describe("The APRS info parser", function() {
 
   it("sample 11 should have phg and altitude",
   function() {
-    var input=new Buffer(sampleFrames[11]);
+    var input=Buffer.from(sampleFrames[11]);
     var parser=new KISSFrameParser();
     parser.setInput(input);
     var frame=parser.parseFrame();
@@ -56,7 +56,7 @@ describe("The APRS info parser", function() {
   });
   it("takes the 5th sample (MIC-E Data) and parses it",
   function() {
-    var input=new Buffer(sampleFrames[5]);
+    var input=Buffer.from(sampleFrames[5]);
     var parser=new KISSFrameParser();
     parser.setInput(input);
     var frame=parser.parseFrame();

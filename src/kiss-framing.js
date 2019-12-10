@@ -53,7 +53,7 @@ var TFESC=0xdd;
 
 var unescapeStateMachine=function(bufferLength) {
 
-  var outputBuffer=new Buffer(bufferLength);
+  var outputBuffer=Buffer.alloc(bufferLength);
   var contentLength=0;
   var process;
 
@@ -124,7 +124,7 @@ var unescapeStateMachine=function(bufferLength) {
 */
 var Escaper=function(bufferLength) {
 
-  var outputBuffer=new Buffer(bufferLength);
+  var outputBuffer=Buffer.alloc(bufferLength);
   var contentLength=0;
 
   var output=function(c) {
@@ -162,7 +162,7 @@ var Escaper=function(bufferLength) {
     }
     output(FEND);
     // Return a copy of the buffer, in case it gets used anywhere else.
-    return new Buffer(outputBuffer.slice(0, contentLength));
+    return Buffer.from(outputBuffer.slice(0, contentLength));
   }
 
   this.escapeAndWriteKISSCommand=function(buffer) {
@@ -175,7 +175,7 @@ var Escaper=function(bufferLength) {
     // Return a copy of the buffer, in case it gets used anywhere else.
     var slicedBuffer=outputBuffer.slice(0, contentLength);
     //console.log("slicedBuffer=" + slicedBuffer);
-    return new Buffer(slicedBuffer);
+    return Buffer.from(slicedBuffer);
   }
 
 }

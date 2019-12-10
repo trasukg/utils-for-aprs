@@ -95,7 +95,7 @@ KISSFrameBuilder.prototype.build=function() {
   validateFrame(this.frame);
   // TODO: This really ought to handle UTF-8 info strings properly!
   var frameLength=17 + 7*this.frame.repeaterPath.length + this.frame.info.length;
-  var buffer=new Buffer(frameLength);
+  var buffer=Buffer.alloc(frameLength);
   var writeIndex=0
   buffer[writeIndex++]=0;
   writeIndex=writeAddress(buffer, writeIndex, this.frame.destination);

@@ -19,7 +19,7 @@ under the License.
 
 describe('The Buffer class', function() {
   it('can be allocated and copied', function() {
-    var buf1=new Buffer(256);
-    new Buffer(buf1);
+    var buf1=Buffer.alloc(256);
+    Buffer.from(buf1);
   })
 });

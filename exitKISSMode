@@ -48,7 +48,7 @@ var port=new SerialPort(process.argv[2],
       }
       console.log(output);
     });
-    var outputBuf=new Buffer(2);
+    var outputBuf=Buffer.alloc(2);
     outputBuf[0]=0xc0;
     outputBuf[1]=0xff;
 
