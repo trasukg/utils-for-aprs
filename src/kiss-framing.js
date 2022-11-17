@@ -35,6 +35,10 @@ into 'data' event and 'packet-ended' event.  But realistically, APRS packets
 are going to be small.
 */
 
+/* TODO: In order to work with later versions of serialport, this needs to be
+  rewritten as a Transform stream
+*/
+
 var tncFrameParser=function() {
 
   var stateMachine=unescapeStateMachine(1024);

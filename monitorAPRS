@@ -19,8 +19,7 @@ specific language governing permissions and limitations
 under the License.
 */
 
-var serialport=require('serialport');
-var SerialPort=serialport.SerialPort;
+const { SerialPort } = require('serialport');
 var path=require('path');
 var util=require('util');
 var framing=require('./src/kiss-framing.js');
@@ -35,26 +34,27 @@ if (process.argv.length != 3) {
 }
 
 //Open the serial port
-var port=new SerialPort(process.argv[2],
+var port=new SerialPort(
   {
-    baudrate: 1200,
+    path: process.argv[2],
+    baudRate: 1200,
     parser: framing.tncFrameParser()
   } );
-  // On open, install a handler that prints the data.
-  port.on('open', function() {
-    console.log("Port opened");
-    var frameParser=new KISSFrameParser();
-    var aprsParser=new APRSInfoParser();
+// On open, install a handler that prints the data.
+port.on('open', function() {
+  console.log("Port opened");
+  var frameParser=new KISSFrameParser();
+  var aprsParser=new APRSInfoParser();
 
-    port.on('data', function(data) {
-      try {
-        frameParser.setInput(data);
-        var frame=frameParser.parseFrame();
-        aprsParser.parse(frame);
-        console.log(frame);
-      } catch(err) {
-        console.log("Bad frame:", err);
-        console.log(frame);
-      }
-    });
+  port.on('data', function(data) {
+    try {
+      frameParser.setInput(data);
+      var frame=frameParser.parseFrame();
+      aprsParser.parse(frame);
+      console.log(frame);
+    } catch(err) {
+      console.log("Bad frame:", err);
+      console.log(frame);
+    }
   });
+});
