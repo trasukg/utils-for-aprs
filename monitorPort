@@ -23,7 +23,8 @@ var serialport=require('serialport');
 var SerialPort=serialport.SerialPort;
 var path=require('path');
 var util=require('util');
-var framing=require('./kiss-framing.js');
+const { TncFrameParser } = require('./src/kiss-framing-transform');
+const { Transform } = require('node:stream');
 
 console.log("process.argv=" + process.argv);
 
@@ -33,15 +34,18 @@ if (process.argv.length != 3) {
 }
 
 //Open the serial port
-var port=new SerialPort(process.argv[2],
+var port=new SerialPort(
   {
-    baudrate: 1200,
-    parser: framing.tncFrameParser()
+    path: process.argv[2],
+    baudRate: 1200,
+    /* parser: framing.tncFrameParser() */
   } );
   // On open, install a handler that prints the data.
   port.on('open', function() {
     console.log("Port opened");
-    port.on('data', function(data) {
+    var tncFrameParser = new TncFrameParser();
+    port.pipe(tncFrameParser);
+    tncFrameParser.on('data', function(data) {
       //console.log("Data instanceof Buffer=" + (data instanceof Buffer));
       var output="[";
       for(var i=0; i < data.length; i++) {

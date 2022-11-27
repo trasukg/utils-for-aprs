@@ -119,3 +119,4 @@ interface that will take some time to adopt.
 2.2.9 - Fixed a framing error that caused some transmitted frames to not
 be recognized by the receiving device.  
 2.2.10 - Eliminated usage of 'new Buffer(...)'.
+3.0.0 - Updated dependencies, including adoption of the new serialport options format for the SerialKISSFrameEndpoint.

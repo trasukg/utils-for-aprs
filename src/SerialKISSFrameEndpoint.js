@@ -42,14 +42,13 @@ byte-stuffing as required.  When a KISS frame is received, the endpoint emits a
 @fires KISSFrameEndpoint#connection
 @constructor
 */
-var SerialKISSFrameEndpoint=function(device, options) {
+var SerialKISSFrameEndpoint=function(options) {
   // Lazy-load the serialport library, only if we try to create a serial 
   // connection.
   if (SerialPort === null) {
-    SerialPort=require("serialport");
+    SerialPort=require("serialport").SerialPort;
   }
   KISSFrameEndpoint.apply(this);
-  this.device=device;
   this.options=options;
 };
 
@@ -66,7 +65,7 @@ SerialKISSFrameEndpoint.prototype.openConnection=function() {
   // value of 'this' for use in the closures.
   var self=this;
   self.emit('connecting', self.device, self.options);
-  self.port=new SerialPort(self.device, self.options, function(err) {
+  self.port=new SerialPort(self.options, function(err) {
     if(!err) {
       self.connectionSucceeded();
     } else {

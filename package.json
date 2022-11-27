@@ -1,6 +1,6 @@
 {
   "name": "utils-for-aprs",
-  "version": "2.2.11-beta",
+  "version": "3.0.0-alpha",
   "description": "A suite of utilities for Advanced Packet Reporting System over a KISS TNC.",
   "main": "src/index.js",
   "browser": "src/browser.js",
@@ -8,7 +8,7 @@
     "test": "nyc --reporter=text jasmine"
   },
   "author": "Greg Trasuk",
-  "license": "Apache-2.0",
+  "license": "Apache-2.0", 
   "dependencies": {
     "@trasukg/state-machine": "1.0.1",
     "bluebird": "3.7.2",
