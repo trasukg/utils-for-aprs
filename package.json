@@ -1,6 +1,6 @@
 {
   "name": "utils-for-aprs",
-  "version": "2.2.11-beta",
+  "version": "3.0.1-alpha",
   "description": "A suite of utilities for Advanced Packet Reporting System over a KISS TNC.",
   "main": "src/index.js",
   "browser": "src/browser.js",
@@ -8,13 +8,13 @@
     "test": "nyc --reporter=text jasmine"
   },
   "author": "Greg Trasuk",
-  "license": "Apache-2.0",
+  "license": "Apache-2.0", 
   "dependencies": {
-    "@trasukg/state-machine": "^1.0.0",
-    "bluebird": "^3.5.0",
-    "lex": "^1.7.9",
-    "sprintf-js": "^1.0.3",
-    "ws": "^6.1.2"
+    "@trasukg/state-machine": "1.0.1",
+    "bluebird": "3.7.2",
+    "lex": "1.7.9",
+    "sprintf-js": "1.1.2",
+    "ws": "8.11.0"
   },
   "keywords": [
     "amateur radio",
@@ -27,10 +27,10 @@
     "url": "git@github.com:trasukg/utils-for-aprs.git"
   },
   "devDependencies": {
-    "browser-sync": "^2.26.3",
-    "gulp": "^4.0.0",
-    "gulp-jasmine": "^2.4.2",
-    "gulp-jsdoc3": "^2.0.0",
-    "serialport": "^4.0.7"
+    "browser-sync": "2.27.10",
+    "gulp": "4.0.2",
+    "gulp-jasmine": "4.0.0",
+    "gulp-jsdoc3": "3.0.0",
+    "serialport": "10.5.0"
   }
 }

@@ -39,14 +39,20 @@ are going to be small.
   rewritten as a Transform stream
 */
 
-var tncFrameParser=function() {
+const { Transform } = require('node:stream');
 
-  var stateMachine=unescapeStateMachine(1024);
+class TncFrameParser extends Transform {
 
-  return function(emitter, buffer){
-    for (var i=0; i<buffer.length; i++) {
-      stateMachine(emitter, buffer[i]);
+  #stateMachine=unescapeStateMachine(1024);
+
+  _transform(chunk, encoding, callback){
+    for (var i=0; i<chunk.length; i++) {
+      // console.log("_transform was called")
+      this.#stateMachine(output => { 
+        // console.log('  ..writing output');
+        this.push(output)}, chunk[i]);
     }
+    callback();
   };
 }
 
@@ -92,7 +98,7 @@ var unescapeStateMachine=function(bufferLength) {
         process=escaped;
         break;
       case FEND:
-        if (contentLength>0) emitter.emit('data', outputBuffer.slice(0,contentLength));
+        if (contentLength>0) emitter(outputBuffer.subarray(0,contentLength));
         contentLength=0;
         break;
       default:
@@ -177,12 +183,12 @@ var Escaper=function(bufferLength) {
     }
     output(FEND);
     // Return a copy of the buffer, in case it gets used anywhere else.
-    var slicedBuffer=outputBuffer.slice(0, contentLength);
+    var slicedBuffer=outputBuffer.subarry(0, contentLength);
     //console.log("slicedBuffer=" + slicedBuffer);
     return Buffer.from(slicedBuffer);
   }
 
 }
 
-exports.tncFrameParser=tncFrameParser;
+exports.TncFrameParser=TncFrameParser;
 exports.Escaper=Escaper;
