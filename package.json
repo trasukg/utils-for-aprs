@@ -14,7 +14,7 @@
     "bluebird": "3.7.2",
     "lex": "1.7.9",
     "sprintf-js": "1.1.2",
-    "ws": "8.11.0"
+    "ws": "8.17.1"
   },
   "keywords": [
     "amateur radio",
