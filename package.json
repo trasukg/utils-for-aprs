@@ -1,6 +1,6 @@
 {
   "name": "utils-for-aprs",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "A suite of utilities for Advanced Packet Reporting System over a KISS TNC.",
   "main": "src/index.js",
   "browser": "src/browser.js",
