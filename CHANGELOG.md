@@ -1,5 +1,11 @@
 # utils-for-aprs
 
+## 3.0.3
+
+### Patch Changes
+
+- a8fa0e7: No real change, just added automated publishing to npm with provenance.
+
 ## 3.0.2
 
 ### Patch Changes
