@@ -147,7 +147,7 @@ AprsDataEndpoint.prototype.triggerWait=function() {
   data is an object that will be converted to JSON.
 */
 AprsDataEndpoint.prototype._send=function(data) {
-  console.log("Sending data: " + JSON.stringify(data));
+  // console.log("Sending data: " + JSON.stringify(data));
 }
 
 /** Initiate a request, storing the request data, etc. */
@@ -161,7 +161,7 @@ AprsDataEndpoint.prototype.initiateRequest=function(data) {
   return request.send(
     function(data) {self.send(data); },
     function() {
-      console.log('Finished request ' + data.msgId);
+      // console.log('Finished request ' + data.msgId);
       self._outstandingRequests.delete(data.msgId);
     });
 }
@@ -172,7 +172,7 @@ AprsDataEndpoint.prototype.initiateRequest=function(data) {
 */
 AprsDataEndpoint.prototype._incoming_message = function (message) {
     // See if this is a reply message
-    console.log("_incoming_message called with " + JSON.stringify(message));
+    // console.log("_incoming_message called with " + JSON.stringify(message));
     if (message.replyTo) {
       // Look up the request that goes with it.
       var request=this._outstandingRequests.get(message.replyTo);

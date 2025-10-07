@@ -68,7 +68,7 @@ SocketKISSFrameEndpoint.prototype.openConnection=function() {
   });
   self.socket.on('error', function(err) {
     //console.log("this=" + JSON.stringify(self));
-    console.log("Got error:" + err);
+    // console.log("Got error:" + err);
     self.error(err);
   });
 }
@@ -89,7 +89,7 @@ SocketKISSFrameEndpoint.prototype.emitConnect=function() {
 }
 
 SocketKISSFrameEndpoint.prototype.closeConnectionAndEmitDisconnect=function() {
-  console.log("Closing connection");
+  // console.log("Closing connection");
   this.socket.destroy();
   this.connection.emit('close');
   this.emit('disconnect');
@@ -102,8 +102,8 @@ var SocketKISSConnection=function(socket,endpoint) {
   var self=this;
   self.socket=socket;
   self.socket.on('close', function() {
-    console.log('Got socket closed event.');
-    endpoint.error();
+    // console.log('Got socket closed event.');
+    endpoint.error('Got socket closed event.');
   })
   self.socket.on('data', function(data) {
     // Run the data through the KISSFrameParser.

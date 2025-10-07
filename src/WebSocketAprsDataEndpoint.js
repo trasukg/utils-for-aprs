@@ -62,13 +62,13 @@ WebSocketAprsDataEndpoint.prototype.openConnection=function() {
     self.connectionSucceeded();
     self.socket.on('error', function(err) {
       //console.log("this=" + JSON.stringify(self));
-      console.log("Got error:" + err);
+      // console.log("Got error:" + err);
       self.error(err);
     });
   });
   self.socket.on('error', function(err) {
     //console.log("this=" + JSON.stringify(self));
-    console.log("Got error:" + err);
+    // console.log("Got error:" + err);
     self.error(err);
   });
 }
@@ -89,14 +89,14 @@ WebSocketAprsDataEndpoint.prototype.emitConnect=function() {
 }
 
 WebSocketAprsDataEndpoint.prototype.closeConnectionAndEmitDisconnect=function() {
-  console.log("Closing connection");
+  // console.log("Closing connection");
   this.socket.destroy();
   this.connection.emit('close');
   this.emit('disconnect');
 }
 
 WebSocketAprsDataEndpoint.prototype._send=function(data) {
-  console.log("Sending data up the ws:" + JSON.stringify(data));
+  // console.log("Sending data up the ws:" + JSON.stringify(data));
   this.connection.socket.send(JSON.stringify(data));
 }
 
@@ -108,8 +108,8 @@ var WebSocketAprsDataConnection=function(socket,endpoint) {
   var self=this;
   self.socket=socket;
   self.socket.on('close', function() {
-    console.log('Got socket closed event.');
-    endpoint.error();
+    // console.log('Got socket closed event.');
+    endpoint.error('Socket closed');
   })
   self.socket.on('message', function(data) {
     var message=JSON.parse(data);

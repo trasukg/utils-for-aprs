@@ -91,7 +91,7 @@ ServerSocketKISSFrameEndpoint.prototype.openSocket=function() {
   self.serverSocket= net.createServer();
   self.serverSocket.on('error', function(err) {
     //console.log("this=" + JSON.stringify(self));
-    console.log("Got error:" + err);
+    // console.log("Got error:" + err);
     self.error(err);
   });
   self.serverSocket.on('connection', function(socket) {
@@ -123,7 +123,7 @@ ServerSocketKISSFrameEndpoint.prototype.closeSocketAndEmitDisconnect=function() 
 }
 
 ServerSocketKISSFrameEndpoint.prototype.closeSocket=function() {
-  console.log("Closing server socket");
+  // console.log("Closing server socket");
   this.serverSocket.close();
   /*
   It seems this was never actually called, because the usage of getConnections()
@@ -162,11 +162,11 @@ var ServerSocketKISSConnection=function(socket, endpoint) {
   var self=this;
   self.socket=socket;
   self.socket.on('close', function() {
-    console.log('Got socket closed event.');
+    // console.log('Got socket closed event.');
     self.emit('close');
   });
   self.socket.on('error', function(err) {
-    console.log('Got socket error event.');
+    // console.log('Got socket error event.');
     self.emit('socketError', err);
   });
   self.socket.on('data', function(data) {
