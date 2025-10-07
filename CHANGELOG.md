@@ -1,5 +1,11 @@
 # utils-for-aprs
 
+## 3.1.0
+
+### Minor Changes
+
+- af88326: In some cases the library emits messages to the console, which is not appropriate for a library. This change makes it so the error handling passes errors back to callers of the library, with no output generated directly.
+
 ## 3.0.4
 
 ### Patch Changes
