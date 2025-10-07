@@ -36,9 +36,9 @@ var states={
   },
   Sending: {
     reply: ['Complete', function(data) {
-      console.log('Got reply(' + JSON.stringify(data) + ') in Sending');
+      // console.log('Got reply(' + JSON.stringify(data) + ') in Sending');
       this.resolve(data);
-      console.log('...resolved');
+      // console.log('...resolved');
     }],
     timeout: ['Complete', function() {
       this.reject(new Error('Timed Out'));
